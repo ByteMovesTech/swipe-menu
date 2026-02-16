@@ -16,7 +16,7 @@ body {
 }
 
 .card {
-  position: absolute;
+  position: relative;   /* change from absolute */
   width: 100%;
   background: white;
   border-radius: 12px;
@@ -24,6 +24,7 @@ body {
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
   transition: transform 0.3s ease, opacity 0.3s ease;
   touch-action: none;
+  z-index: 1;
 }
 
 .card img {
