@@ -16,8 +16,8 @@ fetch("menu.json")
 
 function showItem() {
   if (currentIndex >= menu.length) {
-    alert("End of menu!");
-    return;
+  showOrderSummary();
+  return;
   }
 
   let item = menu[currentIndex];
