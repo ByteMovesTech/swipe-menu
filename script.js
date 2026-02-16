@@ -81,3 +81,21 @@ function swipeAway(x, y) {
     showItem();
   }, 300);
 }
+
+function showOrderSummary() {
+  const app = document.querySelector(".app");
+
+  let html = "<h2>Your Order</h2>";
+
+  if (ordered.length === 0) {
+    html += "<p>You didn't order anything.</p>";
+  } else {
+    ordered.forEach(item => {
+      html += `<p>${item.name} - ${item.price}</p>`;
+    });
+  }
+
+  html += "<br><button onclick='location.reload()'>Start Over</button>";
+
+  app.innerHTML = html;
+}
