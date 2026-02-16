@@ -1,1 +1,32 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
 
+.app {
+  position: relative;
+  width: 320px;
+  height: 500px;
+}
+
+.card {
+  position: absolute;
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  touch-action: none;
+}
+
+.card img {
+  width: 100%;
+  border-radius: 8px;
+}
