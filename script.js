@@ -4,13 +4,12 @@ let nextRoundItems = [];    // items swiped right to repeat next round
 let currentIndex = 0;
 let ordered = [];
 let historyStack = [];
-let roundSize = 0;          // original number of items in current round
 
+// DOM elements
 const card = document.getElementById("card");
 const orderCount = document.getElementById("orderCount");
 const cartButton = document.getElementById("cartButton");
 const undoBtn = document.getElementById("undoBtn");
-const progressBar = document.getElementById("progressBar");
 
 // Load menu
 fetch("./menu.json")
@@ -25,13 +24,11 @@ function startNewRound(items) {
   workingMenu = items;
   nextRoundItems = [];
   currentIndex = 0;
-  roundSize = items.length; // store original round size
   if (workingMenu.length > 0) {
     card.style.display = "block";
     showItem();
   } else {
     card.style.display = "none";
-    progressBar.style.width = "100%";
     alert("No more items left! Click the cart when ready to check out.");
   }
 }
@@ -40,7 +37,6 @@ function startNewRound(items) {
 function showItem() {
   if (workingMenu.length === 0) {
     card.style.display = "none";
-    progressBar.style.width = "100%";
     alert("No more items left! Click the cart when ready to check out.");
     return;
   }
@@ -51,7 +47,6 @@ function showItem() {
       startNewRound(nextRoundItems);
     } else {
       card.style.display = "none";
-      progressBar.style.width = "100%";
       alert("All remaining items eliminated or ordered! Click cart when ready.");
     }
     return;
@@ -66,17 +61,6 @@ function showItem() {
 
   card.style.transform = "translate(0,0)";
   card.style.opacity = "1";
-
-  updateProgress();
-}
-
-// Update progress bar
-function updateProgress() {
-  if (roundSize === 0) return;
-
-  // Progress = number of items viewed / original round size
-  const progress = (currentIndex / roundSize) * 100;
-  progressBar.style.width = progress + "%";
 }
 
 // Price helper
@@ -126,7 +110,7 @@ card.addEventListener("pointerup", e => {
     updateCartDisplay();
     swipeAway(0, -600);
     historyStack.push({ item, type: swipeType, index: currentIndex });
-    workingMenu.splice(currentIndex,1); // remove from current round
+    workingMenu.splice(currentIndex,1);
   } 
   else if (dx > 80 && absX > absY) {
     // Swipe right → keep for next round
@@ -189,4 +173,14 @@ cartButton.onclick = () => {
   ordered.forEach(item => {
     html += `
       <div style="margin-bottom:15px;">
-        <img src="${item.image
+        <img src="${item.image}" style="width:100%;border-radius:8px;">
+        <p><strong>${item.name}</strong> – ${item.price}</p>
+      </div>
+    `;
+  });
+
+  html += `<h3>Total: $${total}</h3>`;
+  html += `<button onclick="location.reload()">Start Over</button>`;
+
+  app.innerHTML = html;
+};
