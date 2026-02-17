@@ -1,11 +1,11 @@
 let menu = [];
 let index = 0;
 
-const nameEl = document.getElementById("item-name");
-const descEl = document.getElementById("item-description");
-const priceEl = document.getElementById("item-price");
-const imageEl = document.getElementById("item-image");
-const card = document.getElementById("menu-card");
+const nameEl = document.getElementById("itemName");
+const descEl = document.getElementById("itemDesc");
+const priceEl = document.getElementById("itemPrice");
+const imageEl = document.getElementById("itemImage");
+const card = document.getElementById("card");
 
 fetch("menu.json")
   .then(res => res.json())
@@ -13,9 +13,7 @@ fetch("menu.json")
     menu = data;
     showItem();
   })
-  .catch(err => {
-    console.error("Failed to load menu:", err);
-  });
+  .catch(err => console.error(err));
 
 function showItem() {
   if (menu.length === 0) return;
@@ -26,9 +24,6 @@ function showItem() {
   descEl.textContent = item.description;
   priceEl.textContent = "$" + item.price;
   imageEl.src = "images/" + item.image;
-
-  card.style.transform = "translate(0,0)";
-  card.style.opacity = "1";
 }
 
 function nextItem() {
@@ -53,26 +48,12 @@ card.addEventListener("touchend", e => {
   let diffY = endY - startY;
 
   if (Math.abs(diffX) > Math.abs(diffY)) {
-    if (diffX > 50) {
-      // right swipe
-      swipeAway(400, 0);
-    } else if (diffX < -50) {
-      // left swipe
-      swipeAway(-400, 0);
+    if (diffX > 50 || diffX < -50) {
+      nextItem();
     }
   } else {
     if (diffY < -50) {
-      // up swipe = order (no popup)
-      swipeAway(0, -400);
+      nextItem();
     }
   }
 });
-
-function swipeAway(x, y) {
-  card.style.transform = `translate(${x}px, ${y}px)`;
-  card.style.opacity = "0";
-
-  setTimeout(() => {
-    nextItem();
-  }, 250);
-}
