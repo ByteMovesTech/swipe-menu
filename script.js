@@ -13,10 +13,17 @@ const orderCount = document.getElementById("orderCount");
 const appDiv = document.getElementById("app");
 
 fetch("menu.json")
-  .then(res => res.json())
+  .then(res => {
+    if (!res.ok) throw new Error("menu.json not found");
+    return res.json();
+  })
   .then(data => {
     menu = data;
     startNewRound(menu.slice());
+  })
+  .catch(err => {
+    alert("Failed to load menu. Check console.");
+    console.error(err);
   });
 
 function startNewRound(deck) {
