@@ -7,31 +7,24 @@ body {
   align-items: center;
   height: 100vh;
   overflow: hidden;
-  touch-action: none;
 }
 
 .app {
+  position: relative;
   width: 320px;
-  text-align: center;
-}
-
-#orderCount {
-  font-weight: bold;
-  margin-bottom: 6px;
-}
-
-.hint {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 12px;
+  height: 600px;
 }
 
 .card {
+  position: relative;
+  width: 100%;
   background: white;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
   transition: transform 0.3s ease, opacity 0.3s ease;
+  touch-action: none;
+  z-index: 1;
 }
 
 .card img {
@@ -39,22 +32,42 @@ body {
   border-radius: 8px;
 }
 
-#undoBtn {
-  margin-top: 10px;
-  padding: 8px 14px;
-  border: none;
-  background: #ddd;
-  border-radius: 6px;
+.app p {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 10px;
 }
 
-#cartButton {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 12px 18px;
-  background: black;
-  color: white;
+button {
+  margin-top: 10px;
+  margin-right: 5px;
+  padding: 10px 15px;
   border: none;
-  border-radius: 999px;
+  border-radius: 5px;
+  background: #4caf50;
+  color: white;
   font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #45a049;
+}
+
+/* Progress bar */
+#progressContainer {
+  width: 100%;
+  height: 10px;
+  background: #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+#progressBar {
+  height: 100%;
+  width: 0%;
+  background: #4caf50;
+  transition: width 0.3s ease;
 }
