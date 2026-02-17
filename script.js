@@ -12,12 +12,20 @@ const undoBtn = document.getElementById("undoBtn");
 const appDiv = document.querySelector(".app");
 const swipeLabel = card.querySelector(".swipeLabel");
 
-// Load menu
+// Load menu with debug
 fetch("./menu.json")
-  .then(res => res.json())
+  .then(res => {
+    if (!res.ok) throw new Error("Menu JSON not found! Check file path.");
+    return res.json();
+  })
   .then(data => {
+    console.log("Loaded menu items:", data); // <-- check browser console
     menu = data;
     startNewRound(menu.slice());
+  })
+  .catch(err => {
+    console.error("Error loading menu.json:", err);
+    alert("Failed to load menu. Check console for details.");
   });
 
 function startNewRound(items) {
@@ -98,7 +106,7 @@ card.addEventListener("pointermove", e => {
   swipeLabel.style.transform = "scale(1)";
   swipeLabel.style.opacity = 0;
 
-  let scale = 1 + Math.min(Math.max(absX, absY) / 200, 1); // 1→2
+  let scale = 1 + Math.min(Math.max(absX, absY) / 200, 1);
 
   if (dy < -60 && absY > absX) {
     card.classList.add("swipe-up");
