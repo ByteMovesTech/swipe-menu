@@ -8,6 +8,10 @@ body {
   padding: 20px;
 }
 
+h1 {
+  margin-bottom: 15px;
+}
+
 .card {
   background: white;
   width: 90%;
