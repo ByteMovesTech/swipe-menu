@@ -1,190 +1,73 @@
-let menu = [];              // full menu from JSON
-let workingMenu = [];       // items left in the current round
-let nextRoundItems = [];    // items swiped right to repeat next round
-let currentIndex = 0;
-let ordered = [];
-let historyStack = [];
-
-const card = document.getElementById("card");
-const orderCount = document.getElementById("orderCount");
-const cartButton = document.getElementById("cartButton");
-const undoBtn = document.getElementById("undoBtn");
-
-// Load menu
-fetch("./menu.json")
-  .then(res => res.json())
-  .then(data => {
-    menu = data;
-    startNewRound(menu.slice()); // start with full menu
-  });
-
-// Start a new round with given items
-function startNewRound(items) {
-  workingMenu = items;
-  nextRoundItems = [];
-  currentIndex = 0;
-  if (workingMenu.length > 0) {
-    card.style.display = "block";
-    showItem();
-  } else {
-    card.style.display = "none";
-    alert("No more items left! Click the cart when ready to check out.");
-  }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
 }
 
-// Display current item
-function showItem() {
-  if (workingMenu.length === 0) {
-    card.style.display = "none";
-    alert("No more items left! Click the cart when ready to check out.");
-    return;
-  }
+.app {
+  position: relative;
+  width: 320px;
+  height: 600px;
+}
 
-  if (currentIndex >= workingMenu.length) {
-    // End of round: start next round with items swiped right
-    if (nextRoundItems.length > 0) {
-      startNewRound(nextRoundItems);
-    } else {
-      // Nothing left to repeat
-      card.style.display = "none";
-      alert("All remaining items eliminated or ordered! Click cart when ready.");
+.card {
+  position: relative;
+  width: 100%;
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  touch-action: none;
+  z-index: 1;
+}
+
+.card img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.app p {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+button {
+  margin-top: 10px;
+  margin-right: 5px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  background: #4caf50;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #45a049;
+}
+
+/* Progress bar */
+#progressContainer {
+  width: 100%;
+  height: 10px;
+  background: #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+#progressBar {
+  height: 100%;
+  width: 0%;
+  background: #4caf50;
+  transition: width 0.3s ease;
     }
-    return;
-  }
-
-  const item = workingMenu[currentIndex];
-
-  document.getElementById("itemName").textContent = item.name;
-  document.getElementById("itemDesc").textContent = item.description;
-  document.getElementById("itemPrice").textContent = item.price;
-  document.getElementById("itemImage").src = item.image;
-
-  card.style.transform = "translate(0,0)";
-  card.style.opacity = "1";
-}
-
-// Price helper
-function priceToNumber(price) {
-  return Number(price.replace("$",""));
-}
-
-// Update cart button and counter
-function updateCartDisplay() {
-  orderCount.textContent = "Ordered: " + ordered.length;
-
-  let total = ordered.reduce((sum, item) => sum + priceToNumber(item.price), 0);
-
-  cartButton.textContent = `Cart (${ordered.length} – $${total})`;
-}
-
-// Pointer swipe variables
-let startX = 0;
-let startY = 0;
-
-card.addEventListener("pointerdown", e => {
-  startX = e.clientX;
-  startY = e.clientY;
-  card.setPointerCapture(e.pointerId);
-});
-
-card.addEventListener("pointermove", e => {
-  if (startX === 0 && startY === 0) return;
-
-  const dx = e.clientX - startX;
-  const dy = e.clientY - startY;
-
-  card.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx * 0.05}deg)`;
-});
-
-card.addEventListener("pointerup", e => {
-  const dx = e.clientX - startX;
-  const dy = e.clientY - startY;
-  const absX = Math.abs(dx);
-  const absY = Math.abs(dy);
-
-  const item = workingMenu[currentIndex];
-  let swipeType = null;
-
-  if (dy < -60 && absY > absX) {
-    // Swipe up → order
-    ordered.push(item);
-    swipeType = "up";
-    updateCartDisplay();
-    swipeAway(0, -600);
-    historyStack.push({ item: item, type: swipeType, index: currentIndex });
-    workingMenu.splice(currentIndex,1); // remove from current round
-  }
-  else if (dx > 80 && absX > absY) {
-    // Swipe right → keep for next round
-    swipeType = "right";
-    nextRoundItems.push(item);          // add to next round
-    historyStack.push({ item: item, type: swipeType, index: currentIndex });
-    currentIndex++;                     // move to next item
-  }
-  else if (dx < -80 && absX > absY) {
-    // Swipe left → eliminate
-    swipeType = "left";
-    historyStack.push({ item: item, type: swipeType, index: currentIndex });
-    workingMenu.splice(currentIndex,1); // remove from current round
-  }
-  else {
-    // no swipe, reset
-    card.style.transform = "translate(0,0)";
-    startX = 0;
-    startY = 0;
-    return;
-  }
-
-  startX = 0;
-  startY = 0;
-
-  showItem();
-});
-
-function swipeAway(x, y) {
-  card.style.transform = `translate(${x}px, ${y}px)`;
-  card.style.opacity = "0";
-}
-
-// Undo button
-undoBtn.onclick = () => {
-  if (historyStack.length === 0) return;
-
-  const last = historyStack.pop();
-  const item = last.item;
-
-  if (last.type === "up") {
-    ordered.splice(ordered.indexOf(item),1);
-    workingMenu.splice(last.index,0,item);
-  } else if (last.type === "left") {
-    workingMenu.splice(last.index,0,item);
-  } else if (last.type === "right") {
-    nextRoundItems.splice(nextRoundItems.indexOf(item),1);
-  }
-
-  updateCartDisplay();
-  showItem();
-};
-
-// Cart button
-cartButton.onclick = () => {
-  const app = document.querySelector(".app");
-
-  let total = ordered.reduce((sum, item) => sum + priceToNumber(item.price), 0);
-
-  let html = "<h2>Your Cart</h2>";
-
-  ordered.forEach(item => {
-    html += `
-      <div style="margin-bottom:15px;">
-        <img src="${item.image}" style="width:100%;border-radius:8px;">
-        <p><strong>${item.name}</strong> – ${item.price}</p>
-      </div>
-    `;
-  });
-
-  html += `<h3>Total: $${total}</h3>`;
-  html += `<button onclick="location.reload()">Start Over</button>`;
-
-  app.innerHTML = html;
-};
