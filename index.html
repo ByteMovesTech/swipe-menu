@@ -1,29 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Swipe Menu</title>
-
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
 <h1>Our Menu</h1>
 
-<div id="card-container">
-  <div id="menu-card" class="card">
-    <img id="item-image" src="" alt="">
-    <h2 id="item-name"></h2>
-    <p id="item-description"></p>
-    <div class="price" id="item-price"></div>
-  </div>
+<div class="card" id="card">
+  <img id="itemImage" src="">
+  <h2 id="itemName"></h2>
+  <p id="itemDesc"></p>
+  <div id="itemPrice" class="price"></div>
 </div>
 
 <div class="hints">
-  ⬅️ Swipe Left = Skip  
-  ➡️ Swipe Right = Save  
-  ⬆️ Swipe Up = Order
+  ⬅️ Skip &nbsp;&nbsp; ➡️ Save &nbsp;&nbsp; ⬆️ Order
 </div>
 
 <script src="script.js"></script>
