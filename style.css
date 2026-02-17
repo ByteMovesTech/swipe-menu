@@ -1,9 +1,11 @@
 body {
+  margin: 0;
   font-family: Arial, sans-serif;
   background: #f2f2f2;
-  margin: 0;
-  padding: 10px;
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
 }
 
 h1 {
@@ -11,34 +13,21 @@ h1 {
 }
 
 #card-container {
+  width: 100%;
+  max-width: 360px;
   display: flex;
   justify-content: center;
-  margin-top: 10px;
 }
 
 .card {
   background: white;
   border-radius: 14px;
-  padding: 12px;
-  width: 90%;
-  max-width: 380px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  padding: 16px;
+  width: 100%;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  touch-action: none;
 }
 
 .card img {
-  width: 100%;
-  border-radius: 10px;
-  margin-bottom: 8px;
-}
-
-.price {
-  font-weight: bold;
-  font-size: 18px;
-  margin-top: 6px;
-}
-
-.hints {
-  margin-top: 14px;
-  font-size: 14px;
-  color: #444;
-}
+  width:
