@@ -60,6 +60,8 @@ function showItem() {
   card.style.opacity = "1";
   card.classList.remove("swipe-left", "swipe-right", "swipe-up");
   swipeLabel.textContent = "";
+  swipeLabel.style.transform = "scale(1)";
+  swipeLabel.style.opacity = 0;
 }
 
 function priceToNumber(price) {
@@ -93,22 +95,34 @@ card.addEventListener("pointermove", e => {
   const absY = Math.abs(dy);
   card.classList.remove("swipe-left", "swipe-right", "swipe-up");
   swipeLabel.textContent = "";
+  swipeLabel.style.transform = "scale(1)";
+  swipeLabel.style.opacity = 0;
+
+  let scale = 1 + Math.min(Math.max(absX, absY) / 200, 1); // 1→2
 
   if (dy < -60 && absY > absX) {
     card.classList.add("swipe-up");
     swipeLabel.textContent = "Order";
+    swipeLabel.style.opacity = 1;
+    swipeLabel.style.transform = `scale(${scale})`;
   } else if (dx > 80 && absX > absY) {
     card.classList.add("swipe-right");
     swipeLabel.textContent = "Maybe";
+    swipeLabel.style.opacity = 1;
+    swipeLabel.style.transform = `scale(${scale})`;
   } else if (dx < -80 && absX > absY) {
     card.classList.add("swipe-left");
     swipeLabel.textContent = "No";
+    swipeLabel.style.opacity = 1;
+    swipeLabel.style.transform = `scale(${scale})`;
   }
 });
 
 card.addEventListener("pointerup", e => {
   card.classList.remove("swipe-left", "swipe-right", "swipe-up");
   swipeLabel.textContent = "";
+  swipeLabel.style.opacity = 0;
+  swipeLabel.style.transform = "scale(1)";
 
   const dx = e.clientX - startX;
   const dy = e.clientY - startY;
