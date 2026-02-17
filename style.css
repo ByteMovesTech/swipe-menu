@@ -61,7 +61,7 @@ button:hover {
   justify-content: space-between;
 }
 
-/* Swipe hint overlay with text */
+/* Swipe hint overlay */
 .card::after {
   content: "";
   position: absolute;
@@ -90,7 +90,7 @@ button:hover {
   opacity: 1;
 }
 
-/* Swipe label text */
+/* Swipe label text with scaling */
 .swipeLabel {
   position: absolute;
   top: 40%;
@@ -102,20 +102,5 @@ button:hover {
   text-shadow: 0 0 8px rgba(0,0,0,0.7);
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.card.swipe-left .swipeLabel {
-  opacity: 1;
-  content: "No";
-}
-
-.card.swipe-right .swipeLabel {
-  opacity: 1;
-  content: "Maybe";
-}
-
-.card.swipe-up .swipeLabel {
-  opacity: 1;
-  content: "Order";
+  transition: opacity 0.1s ease, transform 0.1s ease;
 }
