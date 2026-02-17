@@ -12,6 +12,7 @@ const card = document.getElementById("card");
 const cartButton = document.getElementById("cartButton");
 const cartView = document.getElementById("cartView");
 
+// Load menu
 fetch("menu.json")
   .then(res => res.json())
   .then(data => {
@@ -22,16 +23,20 @@ fetch("menu.json")
   .catch(err => console.error("Failed to load menu:", err));
 
 function showItem() {
-  if (workingMenu.length === 0) return;
+  if (workingMenu.length === 0) {
+    card.style.display = "none";
+    return;
+  }
 
   if (index >= workingMenu.length) {
+    // Only show saved items next
     if (saved.length > 0) {
       workingMenu = [...saved];
       saved = [];
       index = 0;
     } else {
-      workingMenu = [...menu];
-      index = 0;
+      card.style.display = "none"; // nothing left to show
+      return;
     }
   }
 
@@ -40,6 +45,7 @@ function showItem() {
   descEl.textContent = item.description;
   priceEl.textContent = "$" + item.price;
   imageEl.src = "images/" + item.image;
+  card.style.display = "block";
 }
 
 function nextItem() {
@@ -67,7 +73,7 @@ cartButton.addEventListener("click", () => {
   cartView.innerHTML = html;
 });
 
-// touch/swipe events
+// Swipe logic
 let startX = 0;
 let startY = 0;
 
@@ -85,16 +91,23 @@ card.addEventListener("touchend", e => {
 
   if (Math.abs(diffX) > Math.abs(diffY)) {
     if (diffX > 50) {
+      // Swipe right = save
       saved.push(workingMenu[index]);
       nextItem();
     } else if (diffX < -50) {
-      nextItem();
+      // Swipe left = remove from next rounds
+      workingMenu.splice(index, 1);
+      // don't increment index because splice shifts array
+      showItem();
     }
   } else {
     if (diffY < -50) {
+      // Swipe up = order
       ordered.push(workingMenu[index]);
+      // Remove from future rounds
+      workingMenu.splice(index, 1);
       updateCart();
-      nextItem();
+      showItem();
     }
   }
 });
