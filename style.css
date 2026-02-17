@@ -1,18 +1,22 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
   background: #f2f2f2;
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
-  overflow: hidden;
+  align-items: flex-start;
+  min-height: 100vh;
+  padding: 10px;
 }
 
+/* App container now responsive */
 .app {
-  position: relative;
-  width: 320px;
-  max-height: 90vh;
+  width: 100%;
+  max-width: 420px;   /* prevents huge cards on desktop */
   overflow-y: auto;
   text-align: center;
 }
@@ -28,12 +32,12 @@ body {
   margin: 10px 0;
 }
 
+/* Card now uses full available width safely */
 .card {
-  position: relative;
   width: 100%;
   background: white;
   border-radius: 12px;
-  padding: 20px;
+  padding: 16px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
   transition: transform 0.3s ease, opacity 0.3s ease;
   touch-action: none;
