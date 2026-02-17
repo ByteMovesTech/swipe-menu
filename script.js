@@ -72,25 +72,35 @@ card.addEventListener("pointerup", e => {
   const absX = Math.abs(dx);
   const absY = Math.abs(dy);
 
-  historyStack.push(currentIndex);
+  let swipeType = null;
 
   if (dy < -60 && absY > absX) {
+    // swipe up → order
     ordered.push(menu[currentIndex]);
+    swipeType = "up";
     updateCartDisplay();
     swipeAway(0, -600);
   }
   else if (dx > 80 && absX > absY) {
+    // swipe right → like
     liked.push(menu[currentIndex]);
+    swipeType = "right";
     swipeAway(600, 0);
   }
   else if (dx < -80 && absX > absY) {
+    // swipe left → discard
+    swipeType = "left";
     swipeAway(-600, 0);
   }
   else {
     card.style.transform = "translate(0,0)";
-    historyStack.pop();
+    startX = 0;
+    startY = 0;
+    return;
   }
 
+  // save swipe to history
+  historyStack.push({ index: currentIndex, type: swipeType });
   startX = 0;
   startY = 0;
 });
@@ -106,39 +116,3 @@ function swipeAway(x, y) {
 }
 
 undoBtn.onclick = () => {
-  if (historyStack.length === 0) return;
-
-  currentIndex = historyStack.pop();
-
-  const lastOrdered = ordered[ordered.length - 1];
-  if (lastOrdered && lastOrdered === menu[currentIndex]) {
-    ordered.pop();
-    updateCartDisplay();
-  }
-
-  showItem();
-};
-
-cartButton.onclick = () => {
-  const app = document.querySelector(".app");
-
-  let total = ordered.reduce((sum, item) => {
-    return sum + priceToNumber(item.price);
-  }, 0);
-
-  let html = "<h2>Your Cart</h2>";
-
-  ordered.forEach(item => {
-    html += `
-      <div style="margin-bottom:15px;">
-        <img src="${item.image}" style="width:100%;border-radius:8px;">
-        <p><strong>${item.name}</strong> – ${item.price}</p>
-      </div>
-    `;
-  });
-
-  html += `<h3>Total: $${total}</h3>`;
-  html += `<button onclick="location.reload()">Start Over</button>`;
-
-  app.innerHTML = html;
-};
