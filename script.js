@@ -1,4 +1,5 @@
-let menu = [];
+let menu = [];             // full menu from JSON
+let workingMenu = [];      // current round items
 let currentIndex = 0;
 let liked = [];
 let ordered = [];
@@ -9,20 +10,40 @@ const orderCount = document.getElementById("orderCount");
 const cartButton = document.getElementById("cartButton");
 const undoBtn = document.getElementById("undoBtn");
 
+// Load menu
 fetch("./menu.json")
   .then(res => res.json())
   .then(data => {
     menu = data;
+    resetWorkingMenu();
     showItem();
   });
 
+// Start new round with remaining items
+function resetWorkingMenu() {
+  // Only include items not eliminated and not already ordered
+  workingMenu = menu.filter(item => 
+    !ordered.includes(item) && !liked.includes(item)
+  );
+  currentIndex = 0;
+}
+
+// Display current item
 function showItem() {
-  if (currentIndex >= menu.length) {
-    currentIndex = menu.length - 1;
+  if (workingMenu.length === 0) {
+    card.style.display = "none";
+    alert("No more items left! Click the cart when ready to check out.");
     return;
   }
 
-  const item = menu[currentIndex];
+  if (currentIndex >= workingMenu.length) {
+    // End of round, start over with liked items
+    menu = liked.slice();  // only liked items move forward
+    liked = [];
+    resetWorkingMenu();
+  }
+
+  const item = workingMenu[currentIndex];
 
   document.getElementById("itemName").textContent = item.name;
   document.getElementById("itemDesc").textContent = item.description;
@@ -33,10 +54,12 @@ function showItem() {
   card.style.opacity = "1";
 }
 
+// Price helper
 function priceToNumber(price) {
   return Number(price.replace("$",""));
 }
 
+// Update cart button and counter
 function updateCartDisplay() {
   orderCount.textContent = "Ordered: " + ordered.length;
 
@@ -47,6 +70,7 @@ function updateCartDisplay() {
   cartButton.textContent = `Cart (${ordered.length} – $${total})`;
 }
 
+// Pointer swipe variables
 let startX = 0;
 let startY = 0;
 
@@ -68,45 +92,55 @@ card.addEventListener("pointermove", e => {
 card.addEventListener("pointerup", e => {
   const dx = e.clientX - startX;
   const dy = e.clientY - startY;
-
   const absX = Math.abs(dx);
   const absY = Math.abs(dy);
+  const item = workingMenu[currentIndex];
 
   let swipeType = null;
-  const item = menu[currentIndex];
 
   if (dy < -60 && absY > absX) {
-    // swipe up → order
+    // Swipe up → order
     ordered.push(item);
     swipeType = "up";
     updateCartDisplay();
     swipeAway(0, -600);
+    historyStack.push({ item: item, type: swipeType });
+    workingMenu.splice(currentIndex,1); // remove from working menu
   }
   else if (dx > 80 && absX > absY) {
-    // swipe right → like
+    // Swipe right → keep for next round
     liked.push(item);
     swipeType = "right";
     swipeAway(600, 0);
+    historyStack.push({ item: item, type: swipeType });
+    currentIndex++; // move to next
   }
   else if (dx < -80 && absX > absY) {
-    // swipe left → discard
+    // Swipe left → eliminate
     swipeType = "left";
     swipeAway(-600, 0);
+    historyStack.push({ item: item, type: swipeType });
+    workingMenu.splice(currentIndex,1); // remove eliminated item
   }
   else {
+    // no swipe, reset
     card.style.transform = "translate(0,0)";
     startX = 0;
     startY = 0;
     return;
   }
 
-  // push exact item with swipe type to history
-  historyStack.push({ item: item, type: swipeType });
+  // only increment if item not removed
+  if (swipeType === "up" || swipeType === "left") {
+    // do not increment currentIndex, already removed
+  } else {
+    currentIndex++;
+  }
 
   startX = 0;
   startY = 0;
-  currentIndex++;
-  if (currentIndex < menu.length) showItem();
+
+  showItem();
 });
 
 function swipeAway(x, y) {
@@ -114,24 +148,28 @@ function swipeAway(x, y) {
   card.style.opacity = "0";
 }
 
+// Undo button
 undoBtn.onclick = () => {
   if (historyStack.length === 0) return;
 
   const last = historyStack.pop();
-  currentIndex--; // go back to that card
+  const item = last.item;
 
+  // Restore currentIndex to previous
   if (last.type === "up") {
-    const index = ordered.indexOf(last.item);
-    if (index > -1) ordered.splice(index, 1);
-    updateCartDisplay();
+    ordered.splice(ordered.indexOf(item),1);
+    workingMenu.splice(currentIndex,0,item); // restore to working menu at current position
+  } else if (last.type === "left") {
+    workingMenu.splice(currentIndex,0,item); // restore eliminated item
   } else if (last.type === "right") {
-    const index = liked.indexOf(last.item);
-    if (index > -1) liked.splice(index, 1);
+    liked.splice(liked.indexOf(item),1);
   }
 
+  updateCartDisplay();
   showItem();
 };
 
+// Cart button
 cartButton.onclick = () => {
   const app = document.querySelector(".app");
 
