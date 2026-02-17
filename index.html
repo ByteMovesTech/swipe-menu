@@ -1,39 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Swipe Menu</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cafe Menu</title>
+<link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
 
-<div class="app" id="app">
+<h1>Our Menu</h1>
 
-  <div id="orderCount">Ordered: 0</div>
+<div id="menu-container"></div>
 
-  <div id="hintBar">
-    ⬅️ No &nbsp;&nbsp; ➡️ Maybe &nbsp;&nbsp; ⬆️ Order
-  </div>
-
-  <div id="card" class="card">
-
-    <div class="image-container">
-      <img id="itemImage">
-      <div class="gradient"></div>
-      <h2 id="itemName" class="image-title"></h2>
-      <div id="itemPrice" class="price-badge"></div>
-    </div>
-
-    <div class="card-content">
-      <p id="itemDesc"></p>
-    </div>
-
-  </div>
-
-  <button id="undoButton">Undo</button>
-  <button id="cartButton">Cart</button>
-
+<h2>Your Cart</h2>
+<div id="cart-container">
+  <ul id="cart-items"></ul>
 </div>
 
 <script src="script.js"></script>
