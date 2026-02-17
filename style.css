@@ -25,6 +25,7 @@ body {
   transition: transform 0.3s ease, opacity 0.3s ease;
   touch-action: none;
   z-index: 1;
+  overflow: hidden;
 }
 
 .card img {
@@ -60,7 +61,7 @@ button:hover {
   justify-content: space-between;
 }
 
-/* Swipe hint overlay */
+/* Swipe hint overlay with text */
 .card::after {
   content: "";
   position: absolute;
@@ -75,16 +76,46 @@ button:hover {
 }
 
 .card.swipe-left::after {
-  background: rgba(255, 0, 0, 0.3); /* red */
+  background-color: rgba(255, 0, 0, 0.3);
   opacity: 1;
 }
 
 .card.swipe-right::after {
-  background: rgba(255, 200, 0, 0.3); /* yellow */
+  background-color: rgba(255, 200, 0, 0.3);
   opacity: 1;
 }
 
 .card.swipe-up::after {
-  background: rgba(0, 200, 0, 0.3); /* green */
+  background-color: rgba(0, 200, 0, 0.3);
   opacity: 1;
+}
+
+/* Swipe label text */
+.swipeLabel {
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  text-align: center;
+  font-size: 32px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 0 0 8px rgba(0,0,0,0.7);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.card.swipe-left .swipeLabel {
+  opacity: 1;
+  content: "No";
+}
+
+.card.swipe-right .swipeLabel {
+  opacity: 1;
+  content: "Maybe";
+}
+
+.card.swipe-up .swipeLabel {
+  opacity: 1;
+  content: "Order";
 }
