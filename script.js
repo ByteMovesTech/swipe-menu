@@ -60,10 +60,13 @@ card.addEventListener("pointerup", e => {
   else if (deltaX < -100) {
     swipeAway(-500, 0);
   } 
-  else if (deltaY < -100) {
-    ordered.push(menu[currentIndex]);
-    swipeAway(0, -500);
-  } 
+
+else if (deltaY < -100) {
+  ordered.push(menu[currentIndex]);
+  updateCounter();
+  swipeAway(0, -500);
+} 
+  
   else {
     card.style.transform = "translate(0,0)";
   }
