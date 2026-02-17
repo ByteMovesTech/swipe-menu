@@ -55,24 +55,6 @@ button:hover {
   background: #45a049;
 }
 
-/* Progress bar styling */
-#progressContainer {
-  width: 100%;
-  height: 16px;         /* taller for visibility */
-  background: #ddd;
-  border-radius: 8px;
-  margin-bottom: 15px;  /* space between bar and card */
-  overflow: hidden;
-  border: 2px solid #bbb; /* outline to make it stand out */
-}
-
-#progressBar {
-  height: 100%;
-  width: 0%;
-  background: #4caf50; /* bright green */
-  transition: width 0.3s ease;
-}
-
 /* Button container spacing */
 .buttons {
   display: flex;
