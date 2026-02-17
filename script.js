@@ -29,13 +29,12 @@ function showItem() {
   }
 
   if (index >= workingMenu.length) {
-    // Only show saved items next
     if (saved.length > 0) {
       workingMenu = [...saved];
       saved = [];
       index = 0;
     } else {
-      card.style.display = "none"; // nothing left to show
+      card.style.display = "none";
       return;
     }
   }
@@ -65,12 +64,31 @@ cartButton.addEventListener("click", () => {
   if (ordered.length === 0) {
     html += "<p>No items yet</p>";
   } else {
+    // Add thumbnails
     ordered.forEach(i => {
-      html += `<p>${i.name} - $${i.price}</p>`;
+      html += `
+        <div class="cart-item">
+          <img src="images/${i.image}" alt="${i.name}">
+          <span>${i.name} - $${i.price}</span>
+        </div>
+      `;
     });
   }
 
+  html += `<br><button id="startOver">Start Over</button>`;
   cartView.innerHTML = html;
+
+  // Add start over functionality
+  const startOverBtn = document.getElementById("startOver");
+  startOverBtn.addEventListener("click", () => {
+    workingMenu = [...menu];
+    saved = [];
+    ordered = [];
+    index = 0;
+    updateCart();
+    showItem();
+    cartView.classList.add("hidden");
+  });
 });
 
 // Swipe logic
@@ -97,14 +115,12 @@ card.addEventListener("touchend", e => {
     } else if (diffX < -50) {
       // Swipe left = remove from next rounds
       workingMenu.splice(index, 1);
-      // don't increment index because splice shifts array
       showItem();
     }
   } else {
     if (diffY < -50) {
       // Swipe up = order
       ordered.push(workingMenu[index]);
-      // Remove from future rounds
       workingMenu.splice(index, 1);
       updateCart();
       showItem();
