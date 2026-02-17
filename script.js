@@ -1,5 +1,3 @@
-console.log("App started");
-
 let menu = [];
 let currentIndex = 0;
 let liked = [];
@@ -7,7 +5,7 @@ let ordered = [];
 
 const card = document.getElementById("card");
 
-fetch("menu.json")
+fetch("./menu.json")
   .then(res => res.json())
   .then(data => {
     menu = data;
@@ -16,8 +14,8 @@ fetch("menu.json")
 
 function showItem() {
   if (currentIndex >= menu.length) {
-  showOrderSummary();
-  return;
+    showOrderSummary();
+    return;
   }
 
   let item = menu[currentIndex];
@@ -53,20 +51,18 @@ card.addEventListener("pointerup", e => {
   let deltaX = e.clientX - startX;
   let deltaY = e.clientY - startY;
 
-  if (deltaX > 100) {
+  if (deltaX > 80) {
     liked.push(menu[currentIndex]);
     swipeAway(500, 0);
   } 
-  else if (deltaX < -100) {
+  else if (deltaX < -80) {
     swipeAway(-500, 0);
   } 
-
-else if (deltaY < -100) {
-  ordered.push(menu[currentIndex]);
-  updateCounter();
-  swipeAway(0, -500);
-} 
-  
+  else if (deltaY < -60) {
+    ordered.push(menu[currentIndex]);
+    updateCounter();
+    swipeAway(0, -500);
+  } 
   else {
     card.style.transform = "translate(0,0)";
   }
@@ -83,6 +79,11 @@ function swipeAway(x, y) {
     currentIndex++;
     showItem();
   }, 300);
+}
+
+function updateCounter() {
+  document.getElementById("orderCount").textContent =
+    "Ordered: " + ordered.length;
 }
 
 function showOrderSummary() {
@@ -102,8 +103,3 @@ function showOrderSummary() {
 
   app.innerHTML = html;
 }
-function updateCounter() {
-  document.getElementById("orderCount").textContent =
-    "Ordered: " + ordered.length;
-}
-
