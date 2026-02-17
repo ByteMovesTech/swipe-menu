@@ -55,7 +55,6 @@ button:hover {
   background: #45a049;
 }
 
-/* Button container spacing */
 .buttons {
   display: flex;
   justify-content: space-between;
