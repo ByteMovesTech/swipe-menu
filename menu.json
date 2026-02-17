@@ -1,9 +1,9 @@
 [
   {
-    "name": "Homemade Tomato Soup",
-    "description": "Rich tomato soup made fresh daily.",
-    "price": 5.99,
-    "image": "tomato-soup.jpg"
+  "name": "Jaclyn's Homemade Tomato Soup",
+  "description": "Rich, slow-simmered tomato soup made fresh daily.",
+  "price": "5.99",
+  "image": "homemade-tomato-soup.jpg"
   },
   {
     "name": "Grilled Cheese Sandwich",
