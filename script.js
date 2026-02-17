@@ -1,173 +1,42 @@
-let menu = [];
-let currentDeck = [];
-let currentIndex = 0;
-
-let liked = [];
-let ordered = [];
-let historyStack = [];
-
-const card = document.getElementById("card");
-const undoButton = document.getElementById("undoButton");
-const cartButton = document.getElementById("cartButton");
-const orderCount = document.getElementById("orderCount");
-const appDiv = document.getElementById("app");
+let cart = [];
 
 fetch("menu.json")
-  .then(res => {
-    if (!res.ok) throw new Error("menu.json not found");
-    return res.json();
-  })
-  .then(data => {
-    menu = data;
-    startNewRound(menu.slice());
-  })
-  .catch(err => {
-    alert("Failed to load menu. Check console.");
-    console.error(err);
-  });
+  .then(response => response.json())
+  .then(data => displayMenu(data))
+  .catch(error => console.error("Failed to load menu:", error));
 
-function startNewRound(deck) {
-  currentDeck = deck;
-  currentIndex = 0;
-  showItem();
-}
+function displayMenu(items) {
+  const container = document.getElementById("menu-container");
+  container.innerHTML = "";
 
-function showItem() {
-  if (currentIndex >= currentDeck.length) {
-    if (liked.length > 0) {
-      startNewRound(liked.slice());
-      liked = [];
-      return;
-    } else {
-      showCart();
-      return;
-    }
-  }
+  items.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "menu-card";
 
-  let item = currentDeck[currentIndex];
-
-  document.getElementById("itemName").textContent = item.name;
-  document.getElementById("itemDesc").textContent = item.description;
-  document.getElementById("itemPrice").textContent = item.price;
-  document.getElementById("itemImage").src = item.image;
-
-  card.style.transform = "translate(0,0)";
-  card.style.opacity = "1";
-
-  updateOrderCount();
-}
-
-function updateOrderCount() {
-  orderCount.textContent = "Ordered: " + ordered.length;
-}
-
-let startX = 0;
-let startY = 0;
-
-card.addEventListener("pointerdown", e => {
-  startX = e.clientX;
-  startY = e.clientY;
-  card.setPointerCapture(e.pointerId);
-});
-
-card.addEventListener("pointermove", e => {
-  if (!startX) return;
-
-  let deltaX = e.clientX - startX;
-  let deltaY = e.clientY - startY;
-
-  card.style.transform =
-    `translate(${deltaX}px, ${deltaY}px) rotate(${deltaX * 0.05}deg)`;
-});
-
-card.addEventListener("pointerup", e => {
-  let deltaX = e.clientX - startX;
-  let deltaY = e.clientY - startY;
-
-  let item = currentDeck[currentIndex];
-
-  if (deltaX > 100) {
-    liked.push(item);
-    historyStack.push({type: "like", item});
-    swipeAway(500, 0);
-  }
-  else if (deltaX < -100) {
-    historyStack.push({type: "skip", item});
-    swipeAway(-500, 0);
-  }
-  else if (deltaY < -100) {
-    ordered.push(item);
-    historyStack.push({type: "order", item});
-    swipeAway(0, -500);
-  }
-  else {
-    card.style.transform = "translate(0,0)";
-  }
-
-  startX = 0;
-  startY = 0;
-});
-
-function swipeAway(x, y) {
-  card.style.transform = `translate(${x}px, ${y}px)`;
-  card.style.opacity = "0";
-
-  setTimeout(() => {
-    currentIndex++;
-    showItem();
-  }, 300);
-}
-
-undoButton.onclick = () => {
-  if (historyStack.length === 0) return;
-
-  let last = historyStack.pop();
-
-  if (last.type === "like") liked.pop();
-  if (last.type === "order") ordered.pop();
-
-  currentIndex--;
-  showItem();
-};
-
-cartButton.onclick = () => {
-  showCart();
-};
-
-function showCart() {
-
-  let total = ordered.reduce((sum, item) =>
-    sum + priceToNumber(item.price), 0);
-
-  let html = "<h2>Your Cart</h2>";
-
-  html += '<div style="max-height:400px; overflow-y:auto;">';
-
-  ordered.forEach(item => {
-    html += `
-      <div style="display:flex;align-items:center;margin-bottom:10px;">
-        <img src="${item.image}"
-          style="width:70px;height:70px;object-fit:cover;
-          border-radius:8px;margin-right:10px;">
-        <div>
-          <strong>${item.name}</strong><br>
-          ${item.price}
-        </div>
-      </div>
+    card.innerHTML = `
+      <img src="images/${item.image}" alt="${item.name}">
+      <div class="menu-title">${item.name}</div>
+      <div class="menu-description">${item.description}</div>
+      <div class="menu-price">$${item.price.toFixed(2)}</div>
+      <button onclick="addToCart('${item.name}')">Add to Cart</button>
     `;
+
+    container.appendChild(card);
   });
-
-  html += "</div>";
-
-  html += `<h3>Total: $${total.toFixed(2)}</h3>`;
-
-  html += `
-    <button onclick="location.reload()">Start Over</button>
-  `;
-
-  appDiv.innerHTML = html;
 }
 
-function priceToNumber(price) {
-  return parseFloat(price.replace("$","")) || 0;
+function addToCart(name) {
+  cart.push(name);
+  renderCart();
+}
+
+function renderCart() {
+  const cartList = document.getElementById("cart-items");
+  cartList.innerHTML = "";
+
+  cart.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    cartList.appendChild(li);
+  });
 }
