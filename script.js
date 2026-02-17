@@ -102,3 +102,8 @@ function showOrderSummary() {
 
   app.innerHTML = html;
 }
+function updateCounter() {
+  document.getElementById("orderCount").textContent =
+    "Ordered: " + ordered.length;
+}
+
