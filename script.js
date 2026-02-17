@@ -73,17 +73,18 @@ card.addEventListener("pointerup", e => {
   const absY = Math.abs(dy);
 
   let swipeType = null;
+  const item = menu[currentIndex];
 
   if (dy < -60 && absY > absX) {
     // swipe up → order
-    ordered.push(menu[currentIndex]);
+    ordered.push(item);
     swipeType = "up";
     updateCartDisplay();
     swipeAway(0, -600);
   }
   else if (dx > 80 && absX > absY) {
     // swipe right → like
-    liked.push(menu[currentIndex]);
+    liked.push(item);
     swipeType = "right";
     swipeAway(600, 0);
   }
@@ -99,20 +100,58 @@ card.addEventListener("pointerup", e => {
     return;
   }
 
-  // save swipe to history
-  historyStack.push({ index: currentIndex, type: swipeType });
+  // push exact item with swipe type to history
+  historyStack.push({ item: item, type: swipeType });
+
   startX = 0;
   startY = 0;
+  currentIndex++;
+  if (currentIndex < menu.length) showItem();
 });
 
 function swipeAway(x, y) {
   card.style.transform = `translate(${x}px, ${y}px)`;
   card.style.opacity = "0";
-
-  setTimeout(() => {
-    currentIndex++;
-    if (currentIndex < menu.length) showItem();
-  }, 300);
 }
 
 undoBtn.onclick = () => {
+  if (historyStack.length === 0) return;
+
+  const last = historyStack.pop();
+  currentIndex--; // go back to that card
+
+  if (last.type === "up") {
+    const index = ordered.indexOf(last.item);
+    if (index > -1) ordered.splice(index, 1);
+    updateCartDisplay();
+  } else if (last.type === "right") {
+    const index = liked.indexOf(last.item);
+    if (index > -1) liked.splice(index, 1);
+  }
+
+  showItem();
+};
+
+cartButton.onclick = () => {
+  const app = document.querySelector(".app");
+
+  let total = ordered.reduce((sum, item) => {
+    return sum + priceToNumber(item.price);
+  }, 0);
+
+  let html = "<h2>Your Cart</h2>";
+
+  ordered.forEach(item => {
+    html += `
+      <div style="margin-bottom:15px;">
+        <img src="${item.image}" style="width:100%;border-radius:8px;">
+        <p><strong>${item.name}</strong> – ${item.price}</p>
+      </div>
+    `;
+  });
+
+  html += `<h3>Total: $${total}</h3>`;
+  html += `<button onclick="location.reload()">Start Over</button>`;
+
+  app.innerHTML = html;
+};
