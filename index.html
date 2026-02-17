@@ -5,19 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-<div class="app">
+
+<div class="app" id="app">
+
   <div id="orderCount">Ordered: 0</div>
-  <p>⬅️ No &nbsp;&nbsp; ➡️ Maybe &nbsp;&nbsp; ⬆️ Order</p>
+
+  <div id="hintBar">
+    ⬅️ No &nbsp;&nbsp; ➡️ Maybe &nbsp;&nbsp; ⬆️ Order
+  </div>
+
   <div id="card" class="card">
     <img id="itemImage">
     <h2 id="itemName"></h2>
     <p id="itemDesc"></p>
     <h3 id="itemPrice"></h3>
-    <div class="swipeLabel"></div>
   </div>
-  <button id="undoBtn">Undo</button>
-  <button id="cartButton">Cart (0)</button>
+
+  <button id="undoButton">Undo</button>
+  <button id="cartButton">Cart</button>
+
 </div>
 
 <script src="script.js"></script>
