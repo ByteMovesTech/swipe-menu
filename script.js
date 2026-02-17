@@ -1,5 +1,6 @@
-let menu = [];             // full menu from JSON
-let workingMenu = [];      // items left in current round
+let menu = [];              // full menu from JSON
+let workingMenu = [];       // items left in the current round
+let nextRoundItems = [];    // items swiped right to repeat next round
 let currentIndex = 0;
 let ordered = [];
 let historyStack = [];
@@ -20,8 +21,15 @@ fetch("./menu.json")
 // Start a new round with given items
 function startNewRound(items) {
   workingMenu = items;
+  nextRoundItems = [];
   currentIndex = 0;
-  showItem();
+  if (workingMenu.length > 0) {
+    card.style.display = "block";
+    showItem();
+  } else {
+    card.style.display = "none";
+    alert("No more items left! Click the cart when ready to check out.");
+  }
 }
 
 // Display current item
@@ -33,11 +41,9 @@ function showItem() {
   }
 
   if (currentIndex >= workingMenu.length) {
-    // End of round: start next round with items that were swiped right
-    const nextRound = workingMenu.filter(item => item.keepForNextRound);
-    if (nextRound.length > 0) {
-      nextRound.forEach(item => item.keepForNextRound = false); // reset flag
-      startNewRound(nextRound);
+    // End of round: start next round with items swiped right
+    if (nextRoundItems.length > 0) {
+      startNewRound(nextRoundItems);
     } else {
       // Nothing left to repeat
       card.style.display = "none";
@@ -111,15 +117,13 @@ card.addEventListener("pointerup", e => {
   else if (dx > 80 && absX > absY) {
     // Swipe right → keep for next round
     swipeType = "right";
-    item.keepForNextRound = true;
-    swipeAway(600, 0);
+    nextRoundItems.push(item);          // add to next round
     historyStack.push({ item: item, type: swipeType, index: currentIndex });
-    currentIndex++;
+    currentIndex++;                     // move to next item
   }
   else if (dx < -80 && absX > absY) {
     // Swipe left → eliminate
     swipeType = "left";
-    swipeAway(-600, 0);
     historyStack.push({ item: item, type: swipeType, index: currentIndex });
     workingMenu.splice(currentIndex,1); // remove from current round
   }
@@ -155,7 +159,7 @@ undoBtn.onclick = () => {
   } else if (last.type === "left") {
     workingMenu.splice(last.index,0,item);
   } else if (last.type === "right") {
-    item.keepForNextRound = false;
+    nextRoundItems.splice(nextRoundItems.indexOf(item),1);
   }
 
   updateCartDisplay();
