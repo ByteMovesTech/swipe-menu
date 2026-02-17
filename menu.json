@@ -1,25 +1,20 @@
 [
-  {"name": "Jaclyn's Homemade Tomato Soup","description":"Rich and creamy tomato soup made with fresh vine-ripened tomatoes and a hint of basil.","price":"$5.99","image":"images/tomato_soup.jpg"},
-  {"name": "Chocolate Ice Cream","description":"Decadent chocolate ice cream with chunks of dark chocolate throughout.","price":"$3.99","image":"images/chocolate_ice_cream.jpg"},
-  {"name": "Oooey Gooey Chocolate Dream Brownie","description":"Fudgy chocolate brownie topped with a drizzle of chocolate ganache.","price":"$4.50","image":"images/chocolate_brownie.jpg"},
-  {"name": "Taco Platter","description":"Three crispy tacos filled with seasoned beef, lettuce, cheese, and salsa.","price":"$9.99","image":"images/taco_platter.jpg"},
-  {"name": "Enchilada Dinner","description":"Two cheesy chicken enchiladas smothered in our signature red sauce.","price":"$11.50","image":"images/enchiladas.jpg"},
-  {"name": "Meatloaf","description":"Classic meatloaf with a rich tomato glaze, served with mashed potatoes.","price":"$10.99","image":"images/meatloaf.jpg"},
-  {"name": "Angus Ribeye","description":"Juicy 12 oz ribeye steak, grilled to perfection, served with seasonal vegetables.","price":"$22.99","image":"images/ribeye.jpg"},
-  {"name": "Nachos","description":"Crispy tortilla chips topped with melted cheese, jalapeños, and fresh salsa.","price":"$7.50","image":"images/nachos.jpg"},
-  {"name": "Caesar Salad","description":"Crisp romaine lettuce tossed with creamy Caesar dressing, croutons, and Parmesan.","price":"$6.50","image":"images/caesar_salad.jpg"},
-  {"name": "Margherita Pizza","description":"Classic pizza topped with fresh mozzarella, basil, and tomato sauce.","price":"$12.00","image":"images/margherita_pizza.jpg"},
-  {"name": "Buffalo Wings","description":"Spicy buffalo wings served with celery sticks and blue cheese dressing.","price":"$8.99","image":"images/buffalo_wings.jpg"},
-  {"name": "Chocolate Chip Cookie","description":"Freshly baked cookie loaded with chocolate chips.","price":"$2.50","image":"images/choc_chip_cookie.jpg"},
-  {"name": "Grilled Chicken Sandwich","description":"Tender grilled chicken breast with lettuce, tomato, and mayo on a toasted bun.","price":"$9.50","image":"images/grilled_chicken_sandwich.jpg"},
-  {"name": "Spaghetti Bolognese","description":"Classic Italian pasta with rich, meaty tomato sauce and Parmesan cheese.","price":"$12.99","image":"images/spaghetti_bolognese.jpg"},
-  {"name": "Fish and Chips","description":"Crispy beer-battered fish served with golden fries and tartar sauce.","price":"$13.50","image":"images/fish_and_chips.jpg"},
-  {"name": "Veggie Stir Fry","description":"Colorful mix of fresh vegetables stir-fried in a savory garlic soy sauce.","price":"$10.00","image":"images/veggie_stir_fry.jpg"},
-  {"name": "Cheeseburger","description":"Juicy beef patty topped with cheddar cheese, lettuce, tomato, and pickles.","price":"$9.99","image":"images/cheeseburger.jpg"},
-  {"name": "BBQ Pulled Pork Sandwich","description":"Slow-cooked pulled pork smothered in BBQ sauce on a soft bun.","price":"$10.50","image":"images/bbq_pulled_pork.jpg"},
-  {"name": "Fruit Parfait","description":"Layers of fresh fruit, yogurt, and granola, perfect for a light dessert.","price":"$4.99","image":"images/fruit_parfait.jpg"},
-  {"name": "Pancake Stack","description":"Fluffy pancakes stacked high with butter and maple syrup.","price":"$7.50","image":"images/pancakes.jpg"},
-  {"name": "Caprese Salad","description":"Fresh mozzarella, tomatoes, and basil drizzled with balsamic glaze.","price":"$8.00","image":"images/caprese_salad.jpg"},
-  {"name": "Shrimp Tacos","description":"Grilled shrimp with cabbage slaw and creamy chipotle sauce in soft tortillas.","price":"$11.50","image":"images/shrimp_tacos.jpg"},
-  {"name": "Ice Cream Sundae","description":"Vanilla ice cream topped with chocolate sauce, whipped cream, and a cherry.","price":"$4.50","image":"images/ice_cream_sundae.jpg"}
+  {
+    "name": "Homemade Tomato Soup",
+    "description": "Rich tomato soup made fresh daily.",
+    "price": 5.99,
+    "image": "tomato-soup.jpg"
+  },
+  {
+    "name": "Grilled Cheese Sandwich",
+    "description": "Classic grilled cheese on toasted bread.",
+    "price": 6.49,
+    "image": "grilled-cheese.jpg"
+  },
+  {
+    "name": "Caesar Salad",
+    "description": "Crisp romaine, parmesan, and house dressing.",
+    "price": 7.25,
+    "image": "caesar-salad.jpg"
+  }
 ]
