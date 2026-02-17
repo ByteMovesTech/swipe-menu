@@ -59,6 +59,7 @@ function showItem() {
 
   card.style.transform = "translate(0,0)";
   card.style.opacity = "1";
+  card.classList.remove("swipe-left", "swipe-right", "swipe-up");
 }
 
 // Helper to convert price
@@ -85,12 +86,28 @@ card.addEventListener("pointerdown", e => {
 
 card.addEventListener("pointermove", e => {
   if (startX === 0 && startY === 0) return;
+
   const dx = e.clientX - startX;
   const dy = e.clientY - startY;
   card.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx * 0.05}deg)`;
+
+  // Show visual hint
+  card.classList.remove("swipe-left", "swipe-right", "swipe-up");
+  const absX = Math.abs(dx);
+  const absY = Math.abs(dy);
+
+  if (dy < -60 && absY > absX) {
+    card.classList.add("swipe-up");
+  } else if (dx > 80 && absX > absY) {
+    card.classList.add("swipe-right");
+  } else if (dx < -80 && absX > absY) {
+    card.classList.add("swipe-left");
+  }
 });
 
 card.addEventListener("pointerup", e => {
+  card.classList.remove("swipe-left", "swipe-right", "swipe-up");
+
   const dx = e.clientX - startX;
   const dy = e.clientY - startY;
   const absX = Math.abs(dx);
