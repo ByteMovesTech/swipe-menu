@@ -6,25 +6,28 @@
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="app">
+    <div id="orderCount">Ordered: 0</div>
+    <p>⬅️ No &nbsp;&nbsp; ➡️ Maybe &nbsp;&nbsp; ⬆️ Order</p>
 
-<div class="app">
+    <!-- Progress bar -->
+    <div id="progressContainer">
+      <div id="progressBar"></div>
+    </div>
 
-  <div id="orderCount">Ordered: 0</div>
-  <p class="hint">⬅️ No &nbsp;&nbsp; ➡️ Maybe &nbsp;&nbsp; ⬆️ Order</p>
+    <!-- Menu card -->
+    <div id="card" class="card">
+      <img id="itemImage">
+      <h2 id="itemName"></h2>
+      <p id="itemDesc"></p>
+      <h3 id="itemPrice"></h3>
+    </div>
 
-  <div id="card" class="card">
-    <img id="itemImage">
-    <h2 id="itemName"></h2>
-    <p id="itemDesc"></p>
-    <h3 id="itemPrice"></h3>
+    <!-- Controls -->
+    <button id="undoBtn">Undo</button>
+    <button id="cartButton">Cart (0 – $0)</button>
   </div>
 
-  <button id="undoBtn">Undo</button>
-
-</div>
-
-<button id="cartButton">Cart (0 – $0)</button>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
