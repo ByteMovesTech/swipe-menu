@@ -4,6 +4,7 @@ let liked = [];
 let ordered = [];
 
 const card = document.getElementById("card");
+const orderCount = document.getElementById("orderCount");
 
 fetch("./menu.json")
   .then(res => res.json())
@@ -18,7 +19,7 @@ function showItem() {
     return;
   }
 
-  let item = menu[currentIndex];
+  const item = menu[currentIndex];
 
   document.getElementById("itemName").textContent = item.name;
   document.getElementById("itemDesc").textContent = item.description;
@@ -39,30 +40,34 @@ card.addEventListener("pointerdown", e => {
 });
 
 card.addEventListener("pointermove", e => {
-  if (!startX) return;
+  if (startX === 0 && startY === 0) return;
 
-  let deltaX = e.clientX - startX;
-  let deltaY = e.clientY - startY;
+  const deltaX = e.clientX - startX;
+  const deltaY = e.clientY - startY;
 
   card.style.transform = `translate(${deltaX}px, ${deltaY}px) rotate(${deltaX * 0.05}deg)`;
 });
 
 card.addEventListener("pointerup", e => {
-  let deltaX = e.clientX - startX;
-  let deltaY = e.clientY - startY;
+  const deltaX = e.clientX - startX;
+  const deltaY = e.clientY - startY;
 
-  if (deltaX > 80) {
-    liked.push(menu[currentIndex]);
-    swipeAway(500, 0);
-  } 
-  else if (deltaX < -80) {
-    swipeAway(-500, 0);
-  } 
-  else if (deltaY < -60) {
+  const absX = Math.abs(deltaX);
+  const absY = Math.abs(deltaY);
+
+  // PRIORITIZE vertical swipe if movement is mostly vertical
+  if (deltaY < -60 && absY > absX) {
     ordered.push(menu[currentIndex]);
     updateCounter();
-    swipeAway(0, -500);
-  } 
+    swipeAway(0, -600);
+  }
+  else if (deltaX > 80 && absX > absY) {
+    liked.push(menu[currentIndex]);
+    swipeAway(600, 0);
+  }
+  else if (deltaX < -80 && absX > absY) {
+    swipeAway(-600, 0);
+  }
   else {
     card.style.transform = "translate(0,0)";
   }
@@ -82,8 +87,7 @@ function swipeAway(x, y) {
 }
 
 function updateCounter() {
-  document.getElementById("orderCount").textContent =
-    "Ordered: " + ordered.length;
+  orderCount.textContent = "Ordered: " + ordered.length;
 }
 
 function showOrderSummary() {
