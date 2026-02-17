@@ -59,3 +59,32 @@ button:hover {
   display: flex;
   justify-content: space-between;
 }
+
+/* Swipe hint overlay */
+.card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  opacity: 0;
+  pointer-events: none;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.card.swipe-left::after {
+  background: rgba(255, 0, 0, 0.3); /* red */
+  opacity: 1;
+}
+
+.card.swipe-right::after {
+  background: rgba(255, 200, 0, 0.3); /* yellow */
+  opacity: 1;
+}
+
+.card.swipe-up::after {
+  background: rgba(0, 200, 0, 0.3); /* green */
+  opacity: 1;
+}
