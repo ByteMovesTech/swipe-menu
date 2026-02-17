@@ -7,16 +7,28 @@ body {
   align-items: center;
   height: 100vh;
   overflow: hidden;
+  touch-action: none;
 }
 
 .app {
   position: relative;
   width: 320px;
-  height: 500px;
+  text-align: center;
+}
+
+#orderCount {
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.app p {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 10px;
 }
 
 .card {
-  position: relative;   /* change from absolute */
+  position: relative;
   width: 100%;
   background: white;
   border-radius: 12px;
@@ -24,17 +36,9 @@ body {
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
   transition: transform 0.3s ease, opacity 0.3s ease;
   touch-action: none;
-  z-index: 1;
 }
 
 .card img {
   width: 100%;
   border-radius: 8px;
-}
-
-.app p {
-  text-align: center;
-  color: #666;
-  font-size: 14px;
-  margin-bottom: 10px;
 }
