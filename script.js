@@ -64,7 +64,6 @@ cartButton.addEventListener("click", () => {
   if (ordered.length === 0) {
     html += "<p>No items yet</p>";
   } else {
-    // Add thumbnails
     ordered.forEach(i => {
       html += `
         <div class="cart-item">
@@ -78,7 +77,6 @@ cartButton.addEventListener("click", () => {
   html += `<br><button id="startOver">Start Over</button>`;
   cartView.innerHTML = html;
 
-  // Add start over functionality
   const startOverBtn = document.getElementById("startOver");
   startOverBtn.addEventListener("click", () => {
     workingMenu = [...menu];
