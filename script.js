@@ -2,9 +2,12 @@ let menu = [];
 let currentIndex = 0;
 let liked = [];
 let ordered = [];
+let historyStack = [];
 
 const card = document.getElementById("card");
 const orderCount = document.getElementById("orderCount");
+const cartButton = document.getElementById("cartButton");
+const undoBtn = document.getElementById("undoBtn");
 
 fetch("./menu.json")
   .then(res => res.json())
@@ -15,7 +18,7 @@ fetch("./menu.json")
 
 function showItem() {
   if (currentIndex >= menu.length) {
-    showOrderSummary();
+    currentIndex = menu.length - 1;
     return;
   }
 
@@ -30,6 +33,20 @@ function showItem() {
   card.style.opacity = "1";
 }
 
+function priceToNumber(price) {
+  return Number(price.replace("$",""));
+}
+
+function updateCartDisplay() {
+  orderCount.textContent = "Ordered: " + ordered.length;
+
+  let total = ordered.reduce((sum, item) => {
+    return sum + priceToNumber(item.price);
+  }, 0);
+
+  cartButton.textContent = `Cart (${ordered.length} – $${total})`;
+}
+
 let startX = 0;
 let startY = 0;
 
@@ -42,34 +59,36 @@ card.addEventListener("pointerdown", e => {
 card.addEventListener("pointermove", e => {
   if (startX === 0 && startY === 0) return;
 
-  const deltaX = e.clientX - startX;
-  const deltaY = e.clientY - startY;
+  const dx = e.clientX - startX;
+  const dy = e.clientY - startY;
 
-  card.style.transform = `translate(${deltaX}px, ${deltaY}px) rotate(${deltaX * 0.05}deg)`;
+  card.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx * 0.05}deg)`;
 });
 
 card.addEventListener("pointerup", e => {
-  const deltaX = e.clientX - startX;
-  const deltaY = e.clientY - startY;
+  const dx = e.clientX - startX;
+  const dy = e.clientY - startY;
 
-  const absX = Math.abs(deltaX);
-  const absY = Math.abs(deltaY);
+  const absX = Math.abs(dx);
+  const absY = Math.abs(dy);
 
-  // PRIORITIZE vertical swipe if movement is mostly vertical
-  if (deltaY < -60 && absY > absX) {
+  historyStack.push(currentIndex);
+
+  if (dy < -60 && absY > absX) {
     ordered.push(menu[currentIndex]);
-    updateCounter();
+    updateCartDisplay();
     swipeAway(0, -600);
   }
-  else if (deltaX > 80 && absX > absY) {
+  else if (dx > 80 && absX > absY) {
     liked.push(menu[currentIndex]);
     swipeAway(600, 0);
   }
-  else if (deltaX < -80 && absX > absY) {
+  else if (dx < -80 && absX > absY) {
     swipeAway(-600, 0);
   }
   else {
     card.style.transform = "translate(0,0)";
+    historyStack.pop();
   }
 
   startX = 0;
@@ -82,28 +101,44 @@ function swipeAway(x, y) {
 
   setTimeout(() => {
     currentIndex++;
-    showItem();
+    if (currentIndex < menu.length) showItem();
   }, 300);
 }
 
-function updateCounter() {
-  orderCount.textContent = "Ordered: " + ordered.length;
-}
+undoBtn.onclick = () => {
+  if (historyStack.length === 0) return;
 
-function showOrderSummary() {
-  const app = document.querySelector(".app");
+  currentIndex = historyStack.pop();
 
-  let html = "<h2>Your Order</h2>";
-
-  if (ordered.length === 0) {
-    html += "<p>You didn't order anything.</p>";
-  } else {
-    ordered.forEach(item => {
-      html += `<p>${item.name} - ${item.price}</p>`;
-    });
+  const lastOrdered = ordered[ordered.length - 1];
+  if (lastOrdered && lastOrdered === menu[currentIndex]) {
+    ordered.pop();
+    updateCartDisplay();
   }
 
-  html += "<br><button onclick='location.reload()'>Start Over</button>";
+  showItem();
+};
+
+cartButton.onclick = () => {
+  const app = document.querySelector(".app");
+
+  let total = ordered.reduce((sum, item) => {
+    return sum + priceToNumber(item.price);
+  }, 0);
+
+  let html = "<h2>Your Cart</h2>";
+
+  ordered.forEach(item => {
+    html += `
+      <div style="margin-bottom:15px;">
+        <img src="${item.image}" style="width:100%;border-radius:8px;">
+        <p><strong>${item.name}</strong> – ${item.price}</p>
+      </div>
+    `;
+  });
+
+  html += `<h3>Total: $${total}</h3>`;
+  html += `<button onclick="location.reload()">Start Over</button>`;
 
   app.innerHTML = html;
-}
+};
