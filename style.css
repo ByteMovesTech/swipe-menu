@@ -1,63 +1,33 @@
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #f2f2f2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  overflow: hidden;
-}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Swipe Menu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+</head>
 
-.app {
-  position: relative;
-  width: 320px;
-  max-height: 90vh;
-}
+<body>
 
-.card {
-  position: relative;
-  width: 100%;
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  touch-action: none;
-  z-index: 1;
-}
+<div class="app" id="app">
 
-.card img {
-  width: 100%;
-  border-radius: 8px;
-}
+  <div id="orderCount">Ordered: 0</div>
 
-.app p {
-  text-align: center;
-  color: #666;
-  font-size: 14px;
-  margin-bottom: 10px;
-}
+  <div id="hintBar">
+    ⬅️ No &nbsp;&nbsp; ➡️ Maybe &nbsp;&nbsp; ⬆️ Order
+  </div>
 
-#undoBtn, #cartButton {
-  margin-top: 10px;
-  margin-right: 5px;
-  padding: 8px 12px;
-  border: none;
-  background-color: #4CAF50;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-}
+  <div id="card" class="card">
+    <img id="itemImage">
+    <h2 id="itemName"></h2>
+    <p id="itemDesc"></p>
+    <h3 id="itemPrice"></h3>
+  </div>
 
-.swipeLabel {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%) scale(1);
-  font-size: 24px;
-  font-weight: bold;
-  color: #333;
-  opacity: 0;
-  pointer-events: none;
-}
+  <button id="undoButton">Undo</button>
+  <button id="cartButton">Cart</button>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
