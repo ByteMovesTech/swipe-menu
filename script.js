@@ -1,6 +1,6 @@
-let menu = [];              // full menu from JSON
-let workingMenu = [];       // items in current round
-let nextRoundItems = [];    // right-swiped items for next round
+let menu = [];
+let workingMenu = [];
+let nextRoundItems = [];
 let currentIndex = 0;
 let ordered = [];
 let historyStack = [];
@@ -10,8 +10,9 @@ const orderCount = document.getElementById("orderCount");
 const cartButton = document.getElementById("cartButton");
 const undoBtn = document.getElementById("undoBtn");
 const appDiv = document.querySelector(".app");
+const swipeLabel = card.querySelector(".swipeLabel");
 
-// Load menu from JSON
+// Load menu
 fetch("./menu.json")
   .then(res => res.json())
   .then(data => {
@@ -19,7 +20,6 @@ fetch("./menu.json")
     startNewRound(menu.slice());
   });
 
-// Start a new round with given items
 function startNewRound(items) {
   workingMenu = items;
   nextRoundItems = [];
@@ -33,7 +33,6 @@ function startNewRound(items) {
   }
 }
 
-// Display the current item
 function showItem() {
   if (workingMenu.length === 0) {
     card.style.display = "none";
@@ -60,21 +59,20 @@ function showItem() {
   card.style.transform = "translate(0,0)";
   card.style.opacity = "1";
   card.classList.remove("swipe-left", "swipe-right", "swipe-up");
+  swipeLabel.textContent = "";
 }
 
-// Helper to convert price
 function priceToNumber(price) {
   return Number(price.replace("$",""));
 }
 
-// Update cart button
 function updateCartDisplay() {
   orderCount.textContent = "Ordered: " + ordered.length;
   let total = ordered.reduce((sum, item) => sum + priceToNumber(item.price), 0);
   cartButton.textContent = `Cart (${ordered.length} – $${total})`;
 }
 
-// Pointer variables
+// Pointer events
 let startX = 0;
 let startY = 0;
 
@@ -91,22 +89,26 @@ card.addEventListener("pointermove", e => {
   const dy = e.clientY - startY;
   card.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx * 0.05}deg)`;
 
-  // Show visual hint
-  card.classList.remove("swipe-left", "swipe-right", "swipe-up");
   const absX = Math.abs(dx);
   const absY = Math.abs(dy);
+  card.classList.remove("swipe-left", "swipe-right", "swipe-up");
+  swipeLabel.textContent = "";
 
   if (dy < -60 && absY > absX) {
     card.classList.add("swipe-up");
+    swipeLabel.textContent = "Order";
   } else if (dx > 80 && absX > absY) {
     card.classList.add("swipe-right");
+    swipeLabel.textContent = "Maybe";
   } else if (dx < -80 && absX > absY) {
     card.classList.add("swipe-left");
+    swipeLabel.textContent = "No";
   }
 });
 
 card.addEventListener("pointerup", e => {
   card.classList.remove("swipe-left", "swipe-right", "swipe-up");
+  swipeLabel.textContent = "";
 
   const dx = e.clientX - startX;
   const dy = e.clientY - startY;
@@ -117,7 +119,6 @@ card.addEventListener("pointerup", e => {
   let swipeType = null;
 
   if (dy < -60 && absY > absX) {
-    // Swipe up → order
     ordered.push(item);
     swipeType = "up";
     updateCartDisplay();
@@ -126,14 +127,12 @@ card.addEventListener("pointerup", e => {
     workingMenu.splice(currentIndex, 1);
   } 
   else if (dx > 80 && absX > absY) {
-    // Swipe right → keep for next round
     swipeType = "right";
     nextRoundItems.push(item);
     historyStack.push({ item, type: swipeType, index: currentIndex });
     currentIndex++;
   } 
   else if (dx < -80 && absX > absY) {
-    // Swipe left → eliminate
     swipeType = "left";
     historyStack.push({ item, type: swipeType, index: currentIndex });
     workingMenu.splice(currentIndex, 1);
@@ -155,7 +154,7 @@ function swipeAway(x, y) {
   card.style.opacity = "0";
 }
 
-// Undo button
+// Undo
 undoBtn.onclick = () => {
   if (historyStack.length === 0) return;
 
@@ -175,7 +174,7 @@ undoBtn.onclick = () => {
   updateCartDisplay();
 };
 
-// Cart button
+// Cart
 cartButton.onclick = () => {
   let total = ordered.reduce((sum, item) => sum + priceToNumber(item.price), 0);
 
