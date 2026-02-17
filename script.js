@@ -18,7 +18,8 @@ fetch("menu.json")
     menu = data;
     workingMenu = [...menu];
     showItem();
-  });
+  })
+  .catch(err => console.error("Failed to load menu:", err));
 
 function showItem() {
   if (workingMenu.length === 0) return;
@@ -35,7 +36,6 @@ function showItem() {
   }
 
   const item = workingMenu[index];
-
   nameEl.textContent = item.name;
   descEl.textContent = item.description;
   priceEl.textContent = "$" + item.price;
@@ -67,6 +67,7 @@ cartButton.addEventListener("click", () => {
   cartView.innerHTML = html;
 });
 
+// touch/swipe events
 let startX = 0;
 let startY = 0;
 
@@ -83,16 +84,12 @@ card.addEventListener("touchend", e => {
   let diffY = endY - startY;
 
   if (Math.abs(diffX) > Math.abs(diffY)) {
-
     if (diffX > 50) {
       saved.push(workingMenu[index]);
       nextItem();
-    }
-
-    if (diffX < -50) {
+    } else if (diffX < -50) {
       nextItem();
     }
-
   } else {
     if (diffY < -50) {
       ordered.push(workingMenu[index]);
