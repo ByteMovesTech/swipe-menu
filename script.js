@@ -13,13 +13,12 @@ const appDiv = document.querySelector(".app");
 const swipeLabel = card.querySelector(".swipeLabel");
 
 // Load menu with debug
-fetch("./menu.json")
-  .then(res => {
-    if (!res.ok) throw new Error("Menu JSON not found! Check file path.");
-    return res.json();
-  })
+const basePath = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, "/");
+
+fetch(basePath + "menu.json")
+  .then(res => res.json())
   .then(data => {
-    console.log("Loaded menu items:", data); // <-- check browser console
+    console.log("Loaded menu items:", data);
     menu = data;
     startNewRound(menu.slice());
   })
@@ -79,7 +78,7 @@ function priceToNumber(price) {
 function updateCartDisplay() {
   orderCount.textContent = "Ordered: " + ordered.length;
   let total = ordered.reduce((sum, item) => sum + priceToNumber(item.price), 0);
-  cartButton.textContent = `Cart (${ordered.length} – $${total})`;
+  cartButton.textContent = `Cart (${ordered.length} – $${total.toFixed(2)})`;
 }
 
 // Pointer events
@@ -196,23 +195,31 @@ undoBtn.onclick = () => {
   updateCartDisplay();
 };
 
-// Cart
+// Cart with scrollable list + Back to Menu
 cartButton.onclick = () => {
   let total = ordered.reduce((sum, item) => sum + priceToNumber(item.price), 0);
 
-  let html = "<h2>Your Cart</h2>";
+  let html = '<h2>Your Cart</h2>';
+  html += '<div style="max-height:400px; overflow-y:auto; margin-bottom:15px;">';
 
   ordered.forEach(item => {
     html += `
-      <div style="margin-bottom:15px;">
-        <img src="${item.image}" style="width:100%;border-radius:8px;">
-        <p><strong>${item.name}</strong> – ${item.price}</p>
+      <div style="display:flex; align-items:center; margin-bottom:10px; border-bottom:1px solid #ccc; padding-bottom:5px;">
+        <img src="${item.image}" style="width:80px; height:80px; object-fit:cover; border-radius:8px; margin-right:10px;">
+        <div>
+          <p style="margin:0;"><strong>${item.name}</strong></p>
+          <p style="margin:0;">${item.price}</p>
+        </div>
       </div>
     `;
   });
 
-  html += `<h3>Total: $${total}</h3>`;
-  html += `<button onclick="location.reload()">Start Over</button>`;
+  html += '</div>';
+  html += `
+    <h3>Total: $${total.toFixed(2)}</h3>
+    <button onclick="startNewRound(menu.slice()); ordered=[]; updateCartDisplay();" style="margin-right:10px;">Back to Menu</button>
+    <button onclick="location.reload();">Start Over</button>
+  `;
 
   appDiv.innerHTML = html;
 };
