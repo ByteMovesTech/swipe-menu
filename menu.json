@@ -1,20 +1,74 @@
 [
   {
-  "name": "Jaclyn's Homemade Tomato Soup",
-  "description": "Rich, slow-simmered tomato soup made fresh daily.",
-  "price": "5.99",
-  "image": "homemade-tomato-soup.jpg"
+    "name": "Jaclyn's Homemade Tomato Soup",
+    "description": "Rich, slow-simmered tomato soup made fresh daily.",
+    "price": "5.99",
+    "image": "homemade-tomato-soup.jpg"
+  },
+  {
+    "name": "Chocolate Ice Cream",
+    "description": "Creamy chocolate ice cream with rich cocoa flavor.",
+    "price": "3.99",
+    "image": "chocolate-ice-cream.jpg"
+  },
+  {
+    "name": "Oooey Gooey Chocolate Dream Brownie",
+    "description": "Warm chocolate brownie topped with fudge and chocolate chips.",
+    "price": "4.99",
+    "image": "chocolate-brownie.jpg"
+  },
+  {
+    "name": "Taco Platter",
+    "description": "Three soft tacos with beef, lettuce, cheese, and pico de gallo.",
+    "price": "8.99",
+    "image": "taco-platter.jpg"
+  },
+  {
+    "name": "Enchilada Dinner",
+    "description": "Cheesy chicken enchiladas smothered in red sauce.",
+    "price": "9.99",
+    "image": "enchilada-dinner.jpg"
+  },
+  {
+    "name": "Meatloaf",
+    "description": "Classic meatloaf with rich tomato glaze, served with mashed potatoes.",
+    "price": "10.49",
+    "image": "meatloaf.jpg"
+  },
+  {
+    "name": "Angus Ribeye",
+    "description": "Juicy 12oz Angus ribeye grilled to perfection.",
+    "price": "18.99",
+    "image": "angus-ribeye.jpg"
+  },
+  {
+    "name": "Nachos",
+    "description": "Crispy tortilla chips loaded with cheese, jalapenos, and sour cream.",
+    "price": "7.49",
+    "image": "nachos.jpg"
   },
   {
     "name": "Grilled Cheese Sandwich",
     "description": "Classic grilled cheese on toasted bread.",
-    "price": 6.49,
+    "price": "6.49",
     "image": "grilled-cheese.jpg"
   },
   {
     "name": "Caesar Salad",
-    "description": "Crisp romaine, parmesan, and house dressing.",
-    "price": 7.25,
+    "description": "Crisp romaine with parmesan and house Caesar dressing.",
+    "price": "7.25",
     "image": "caesar-salad.jpg"
+  },
+  {
+    "name": "Veggie Burger",
+    "description": "Grilled plant-based burger with lettuce, tomato, and aioli.",
+    "price": "9.49",
+    "image": "veggie-burger.jpg"
+  },
+  {
+    "name": "Buffalo Wings",
+    "description": "Spicy buffalo wings served with celery and blue cheese dip.",
+    "price": "8.49",
+    "image": "buffalo-wings.jpg"
   }
 ]
