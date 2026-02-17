@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Swipe Menu</title>
   <link rel="stylesheet" href="style.css">
@@ -11,18 +10,21 @@
 
 <h1>Our Menu</h1>
 
+<button id="cartButton">Cart (0)</button>
+
 <div class="card" id="card">
-  <img id="itemImage" src="">
+  <img id="itemImage">
   <h2 id="itemName"></h2>
   <p id="itemDesc"></p>
   <div id="itemPrice" class="price"></div>
 </div>
 
 <div class="hints">
-  ⬅️ Skip &nbsp;&nbsp; ➡️ Save &nbsp;&nbsp; ⬆️ Order
+⬅️ Skip &nbsp;&nbsp; ➡️ Save &nbsp;&nbsp; ⬆️ Order
 </div>
 
-<script src="script.js"></script>
+<div id="cartView" class="hidden"></div>
 
+<script src="script.js"></script>
 </body>
 </html>
