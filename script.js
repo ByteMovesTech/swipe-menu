@@ -1,63 +1,44 @@
 let menu = [];
-let workingMenu = [];
-let nextRoundItems = [];
+let currentDeck = [];
 let currentIndex = 0;
+
+let liked = [];
 let ordered = [];
 let historyStack = [];
 
 const card = document.getElementById("card");
-const orderCount = document.getElementById("orderCount");
+const undoButton = document.getElementById("undoButton");
 const cartButton = document.getElementById("cartButton");
-const undoBtn = document.getElementById("undoBtn");
-const appDiv = document.querySelector(".app");
-const swipeLabel = card.querySelector(".swipeLabel");
+const orderCount = document.getElementById("orderCount");
+const appDiv = document.getElementById("app");
 
-// Load menu with debug
-const basePath = window.location.origin + window.location.pathname.replace(/\/[^\/]*$/, "/");
-
-fetch(basePath + "menu.json")
+fetch("menu.json")
   .then(res => res.json())
   .then(data => {
-    console.log("Loaded menu items:", data);
     menu = data;
     startNewRound(menu.slice());
-  })
-  .catch(err => {
-    console.error("Error loading menu.json:", err);
-    alert("Failed to load menu. Check console for details.");
   });
 
-function startNewRound(items) {
-  workingMenu = items;
-  nextRoundItems = [];
+function startNewRound(deck) {
+  currentDeck = deck;
   currentIndex = 0;
-  if (workingMenu.length > 0) {
-    card.style.display = "block";
-    showItem();
-  } else {
-    card.style.display = "none";
-    alert("All items eliminated or ordered! Click Cart when ready.");
-  }
+  showItem();
 }
 
 function showItem() {
-  if (workingMenu.length === 0) {
-    card.style.display = "none";
-    alert("All items eliminated or ordered! Click Cart when ready.");
-    return;
-  }
-
-  if (currentIndex >= workingMenu.length) {
-    if (nextRoundItems.length > 0) {
-      startNewRound(nextRoundItems);
+  if (currentIndex >= currentDeck.length) {
+    if (liked.length > 0) {
+      startNewRound(liked.slice());
+      liked = [];
+      return;
     } else {
-      card.style.display = "none";
-      alert("All remaining items eliminated or ordered! Click Cart when ready.");
+      showCart();
+      return;
     }
-    return;
   }
 
-  const item = workingMenu[currentIndex];
+  let item = currentDeck[currentIndex];
+
   document.getElementById("itemName").textContent = item.name;
   document.getElementById("itemDesc").textContent = item.description;
   document.getElementById("itemPrice").textContent = item.price;
@@ -65,23 +46,14 @@ function showItem() {
 
   card.style.transform = "translate(0,0)";
   card.style.opacity = "1";
-  card.classList.remove("swipe-left", "swipe-right", "swipe-up");
-  swipeLabel.textContent = "";
-  swipeLabel.style.transform = "scale(1)";
-  swipeLabel.style.opacity = 0;
+
+  updateOrderCount();
 }
 
-function priceToNumber(price) {
-  return Number(price.replace("$",""));
-}
-
-function updateCartDisplay() {
+function updateOrderCount() {
   orderCount.textContent = "Ordered: " + ordered.length;
-  let total = ordered.reduce((sum, item) => sum + priceToNumber(item.price), 0);
-  cartButton.textContent = `Cart (${ordered.length} – $${total.toFixed(2)})`;
 }
 
-// Pointer events
 let startX = 0;
 let startY = 0;
 
@@ -92,134 +64,103 @@ card.addEventListener("pointerdown", e => {
 });
 
 card.addEventListener("pointermove", e => {
-  if (startX === 0 && startY === 0) return;
+  if (!startX) return;
 
-  const dx = e.clientX - startX;
-  const dy = e.clientY - startY;
-  card.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx * 0.05}deg)`;
+  let deltaX = e.clientX - startX;
+  let deltaY = e.clientY - startY;
 
-  const absX = Math.abs(dx);
-  const absY = Math.abs(dy);
-  card.classList.remove("swipe-left", "swipe-right", "swipe-up");
-  swipeLabel.textContent = "";
-  swipeLabel.style.transform = "scale(1)";
-  swipeLabel.style.opacity = 0;
-
-  let scale = 1 + Math.min(Math.max(absX, absY) / 200, 1);
-
-  if (dy < -60 && absY > absX) {
-    card.classList.add("swipe-up");
-    swipeLabel.textContent = "Order";
-    swipeLabel.style.opacity = 1;
-    swipeLabel.style.transform = `scale(${scale})`;
-  } else if (dx > 80 && absX > absY) {
-    card.classList.add("swipe-right");
-    swipeLabel.textContent = "Maybe";
-    swipeLabel.style.opacity = 1;
-    swipeLabel.style.transform = `scale(${scale})`;
-  } else if (dx < -80 && absX > absY) {
-    card.classList.add("swipe-left");
-    swipeLabel.textContent = "No";
-    swipeLabel.style.opacity = 1;
-    swipeLabel.style.transform = `scale(${scale})`;
-  }
+  card.style.transform =
+    `translate(${deltaX}px, ${deltaY}px) rotate(${deltaX * 0.05}deg)`;
 });
 
 card.addEventListener("pointerup", e => {
-  card.classList.remove("swipe-left", "swipe-right", "swipe-up");
-  swipeLabel.textContent = "";
-  swipeLabel.style.opacity = 0;
-  swipeLabel.style.transform = "scale(1)";
+  let deltaX = e.clientX - startX;
+  let deltaY = e.clientY - startY;
 
-  const dx = e.clientX - startX;
-  const dy = e.clientY - startY;
-  const absX = Math.abs(dx);
-  const absY = Math.abs(dy);
+  let item = currentDeck[currentIndex];
 
-  const item = workingMenu[currentIndex];
-  let swipeType = null;
-
-  if (dy < -60 && absY > absX) {
+  if (deltaX > 100) {
+    liked.push(item);
+    historyStack.push({type: "like", item});
+    swipeAway(500, 0);
+  }
+  else if (deltaX < -100) {
+    historyStack.push({type: "skip", item});
+    swipeAway(-500, 0);
+  }
+  else if (deltaY < -100) {
     ordered.push(item);
-    swipeType = "up";
-    updateCartDisplay();
-    swipeAway(0, -600);
-    historyStack.push({ item, type: swipeType, index: currentIndex });
-    workingMenu.splice(currentIndex, 1);
-  } 
-  else if (dx > 80 && absX > absY) {
-    swipeType = "right";
-    nextRoundItems.push(item);
-    historyStack.push({ item, type: swipeType, index: currentIndex });
-    currentIndex++;
-  } 
-  else if (dx < -80 && absX > absY) {
-    swipeType = "left";
-    historyStack.push({ item, type: swipeType, index: currentIndex });
-    workingMenu.splice(currentIndex, 1);
-  } 
+    historyStack.push({type: "order", item});
+    swipeAway(0, -500);
+  }
   else {
     card.style.transform = "translate(0,0)";
-    startX = 0;
-    startY = 0;
-    return;
   }
 
   startX = 0;
   startY = 0;
-  showItem();
 });
 
 function swipeAway(x, y) {
   card.style.transform = `translate(${x}px, ${y}px)`;
   card.style.opacity = "0";
+
+  setTimeout(() => {
+    currentIndex++;
+    showItem();
+  }, 300);
 }
 
-// Undo
-undoBtn.onclick = () => {
+undoButton.onclick = () => {
   if (historyStack.length === 0) return;
 
-  const last = historyStack.pop();
-  const item = last.item;
+  let last = historyStack.pop();
 
-  if (last.type === "up") {
-    ordered.splice(ordered.indexOf(item), 1);
-    workingMenu.splice(last.index, 0, item);
-  } else if (last.type === "left") {
-    workingMenu.splice(last.index, 0, item);
-  } else if (last.type === "right") {
-    nextRoundItems.splice(nextRoundItems.indexOf(item), 1);
-  }
+  if (last.type === "like") liked.pop();
+  if (last.type === "order") ordered.pop();
 
+  currentIndex--;
   showItem();
-  updateCartDisplay();
 };
 
-// Cart with scrollable list + Back to Menu
 cartButton.onclick = () => {
-  let total = ordered.reduce((sum, item) => sum + priceToNumber(item.price), 0);
+  showCart();
+};
 
-  let html = '<h2>Your Cart</h2>';
-  html += '<div style="max-height:400px; overflow-y:auto; margin-bottom:15px;">';
+function showCart() {
+
+  let total = ordered.reduce((sum, item) =>
+    sum + priceToNumber(item.price), 0);
+
+  let html = "<h2>Your Cart</h2>";
+
+  html += '<div style="max-height:400px; overflow-y:auto;">';
 
   ordered.forEach(item => {
     html += `
-      <div style="display:flex; align-items:center; margin-bottom:10px; border-bottom:1px solid #ccc; padding-bottom:5px;">
-        <img src="${item.image}" style="width:80px; height:80px; object-fit:cover; border-radius:8px; margin-right:10px;">
+      <div style="display:flex;align-items:center;margin-bottom:10px;">
+        <img src="${item.image}"
+          style="width:70px;height:70px;object-fit:cover;
+          border-radius:8px;margin-right:10px;">
         <div>
-          <p style="margin:0;"><strong>${item.name}</strong></p>
-          <p style="margin:0;">${item.price}</p>
+          <strong>${item.name}</strong><br>
+          ${item.price}
         </div>
       </div>
     `;
   });
 
-  html += '</div>';
+  html += "</div>";
+
+  html += `<h3>Total: $${total.toFixed(2)}</h3>`;
+
   html += `
-    <h3>Total: $${total.toFixed(2)}</h3>
-    <button onclick="startNewRound(menu.slice()); ordered=[]; updateCartDisplay();" style="margin-right:10px;">Back to Menu</button>
-    <button onclick="location.reload();">Start Over</button>
+    <button onclick="location.reload()">Start Over</button>
   `;
 
   appDiv.innerHTML = html;
-};
+}
+
+function priceToNumber(price) {
+  return parseFloat(price.replace("$","")) || 0;
+}
