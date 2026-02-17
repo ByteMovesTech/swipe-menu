@@ -1,17 +1,17 @@
 let menu = [];              // full menu from JSON
-let workingMenu = [];       // items left in the current round
-let nextRoundItems = [];    // items swiped right to repeat next round
+let workingMenu = [];       // items in current round
+let nextRoundItems = [];    // right-swiped items for next round
 let currentIndex = 0;
 let ordered = [];
 let historyStack = [];
 
-// DOM elements
 const card = document.getElementById("card");
 const orderCount = document.getElementById("orderCount");
 const cartButton = document.getElementById("cartButton");
 const undoBtn = document.getElementById("undoBtn");
+const appDiv = document.querySelector(".app");
 
-// Load menu
+// Load menu from JSON
 fetch("./menu.json")
   .then(res => res.json())
   .then(data => {
@@ -29,31 +29,29 @@ function startNewRound(items) {
     showItem();
   } else {
     card.style.display = "none";
-    alert("No more items left! Click the cart when ready to check out.");
+    alert("All items eliminated or ordered! Click Cart when ready.");
   }
 }
 
-// Display current item
+// Display the current item
 function showItem() {
   if (workingMenu.length === 0) {
     card.style.display = "none";
-    alert("No more items left! Click the cart when ready to check out.");
+    alert("All items eliminated or ordered! Click Cart when ready.");
     return;
   }
 
   if (currentIndex >= workingMenu.length) {
-    // End of round: start next round with items swiped right
     if (nextRoundItems.length > 0) {
       startNewRound(nextRoundItems);
     } else {
       card.style.display = "none";
-      alert("All remaining items eliminated or ordered! Click cart when ready.");
+      alert("All remaining items eliminated or ordered! Click Cart when ready.");
     }
     return;
   }
 
   const item = workingMenu[currentIndex];
-
   document.getElementById("itemName").textContent = item.name;
   document.getElementById("itemDesc").textContent = item.description;
   document.getElementById("itemPrice").textContent = item.price;
@@ -63,20 +61,19 @@ function showItem() {
   card.style.opacity = "1";
 }
 
-// Price helper
+// Helper to convert price
 function priceToNumber(price) {
   return Number(price.replace("$",""));
 }
 
-// Update cart button and counter
+// Update cart button
 function updateCartDisplay() {
   orderCount.textContent = "Ordered: " + ordered.length;
-
   let total = ordered.reduce((sum, item) => sum + priceToNumber(item.price), 0);
   cartButton.textContent = `Cart (${ordered.length} – $${total})`;
 }
 
-// Pointer swipe variables
+// Pointer variables
 let startX = 0;
 let startY = 0;
 
@@ -88,7 +85,6 @@ card.addEventListener("pointerdown", e => {
 
 card.addEventListener("pointermove", e => {
   if (startX === 0 && startY === 0) return;
-
   const dx = e.clientX - startX;
   const dy = e.clientY - startY;
   card.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx * 0.05}deg)`;
@@ -110,7 +106,7 @@ card.addEventListener("pointerup", e => {
     updateCartDisplay();
     swipeAway(0, -600);
     historyStack.push({ item, type: swipeType, index: currentIndex });
-    workingMenu.splice(currentIndex,1);
+    workingMenu.splice(currentIndex, 1);
   } 
   else if (dx > 80 && absX > absY) {
     // Swipe right → keep for next round
@@ -123,7 +119,7 @@ card.addEventListener("pointerup", e => {
     // Swipe left → eliminate
     swipeType = "left";
     historyStack.push({ item, type: swipeType, index: currentIndex });
-    workingMenu.splice(currentIndex,1);
+    workingMenu.splice(currentIndex, 1);
   } 
   else {
     card.style.transform = "translate(0,0)";
@@ -150,22 +146,20 @@ undoBtn.onclick = () => {
   const item = last.item;
 
   if (last.type === "up") {
-    ordered.splice(ordered.indexOf(item),1);
-    workingMenu.splice(last.index,0,item);
+    ordered.splice(ordered.indexOf(item), 1);
+    workingMenu.splice(last.index, 0, item);
   } else if (last.type === "left") {
-    workingMenu.splice(last.index,0,item);
+    workingMenu.splice(last.index, 0, item);
   } else if (last.type === "right") {
-    nextRoundItems.splice(nextRoundItems.indexOf(item),1);
+    nextRoundItems.splice(nextRoundItems.indexOf(item), 1);
   }
 
-  updateCartDisplay();
   showItem();
+  updateCartDisplay();
 };
 
 // Cart button
 cartButton.onclick = () => {
-  const app = document.querySelector(".app");
-
   let total = ordered.reduce((sum, item) => sum + priceToNumber(item.price), 0);
 
   let html = "<h2>Your Cart</h2>";
@@ -182,5 +176,5 @@ cartButton.onclick = () => {
   html += `<h3>Total: $${total}</h3>`;
   html += `<button onclick="location.reload()">Start Over</button>`;
 
-  app.innerHTML = html;
+  appDiv.innerHTML = html;
 };
