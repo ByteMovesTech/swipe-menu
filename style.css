@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: #f2f2f2;
   display: flex;
   justify-content: center;
@@ -11,34 +11,50 @@ body {
 }
 
 .app {
-  position: relative;
   width: 320px;
   text-align: center;
 }
 
 #orderCount {
   font-weight: bold;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
-.app p {
-  color: #666;
+.hint {
   font-size: 14px;
-  margin-bottom: 10px;
+  color: #666;
+  margin-bottom: 12px;
 }
 
 .card {
-  position: relative;
-  width: 100%;
   background: white;
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.2);
   transition: transform 0.3s ease, opacity 0.3s ease;
-  touch-action: none;
 }
 
 .card img {
   width: 100%;
   border-radius: 8px;
+}
+
+#undoBtn {
+  margin-top: 10px;
+  padding: 8px 14px;
+  border: none;
+  background: #ddd;
+  border-radius: 6px;
+}
+
+#cartButton {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 18px;
+  background: black;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  font-weight: bold;
 }
