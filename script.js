@@ -14,8 +14,7 @@ fetch("menu.json")
     showItem();
   })
   .catch(err => {
-    alert("Failed to load menu.json");
-    console.error(err);
+    console.error("Failed to load menu:", err);
   });
 
 function showItem() {
@@ -27,6 +26,9 @@ function showItem() {
   descEl.textContent = item.description;
   priceEl.textContent = "$" + item.price;
   imageEl.src = "images/" + item.image;
+
+  card.style.transform = "translate(0,0)";
+  card.style.opacity = "1";
 }
 
 function nextItem() {
@@ -52,17 +54,25 @@ card.addEventListener("touchend", e => {
 
   if (Math.abs(diffX) > Math.abs(diffY)) {
     if (diffX > 50) {
-      console.log("Right swipe");
-      nextItem();
+      // right swipe
+      swipeAway(400, 0);
     } else if (diffX < -50) {
-      console.log("Left swipe");
-      nextItem();
+      // left swipe
+      swipeAway(-400, 0);
     }
   } else {
     if (diffY < -50) {
-      console.log("Up swipe (order)");
-      alert("Ordered: " + menu[index].name);
-      nextItem();
+      // up swipe = order (no popup)
+      swipeAway(0, -400);
     }
   }
 });
+
+function swipeAway(x, y) {
+  card.style.transform = `translate(${x}px, ${y}px)`;
+  card.style.opacity = "0";
+
+  setTimeout(() => {
+    nextItem();
+  }, 250);
+}
