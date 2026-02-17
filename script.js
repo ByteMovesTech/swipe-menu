@@ -4,6 +4,7 @@ let nextRoundItems = [];    // items swiped right to repeat next round
 let currentIndex = 0;
 let ordered = [];
 let historyStack = [];
+let roundSize = 0;          // original number of items in current round
 
 const card = document.getElementById("card");
 const orderCount = document.getElementById("orderCount");
@@ -24,6 +25,7 @@ function startNewRound(items) {
   workingMenu = items;
   nextRoundItems = [];
   currentIndex = 0;
+  roundSize = items.length; // store original round size
   if (workingMenu.length > 0) {
     card.style.display = "block";
     showItem();
@@ -70,11 +72,10 @@ function showItem() {
 
 // Update progress bar
 function updateProgress() {
-  if (workingMenu.length === 0) {
-    progressBar.style.width = "100%";
-    return;
-  }
-  const progress = (currentIndex / workingMenu.length) * 100;
+  if (roundSize === 0) return;
+
+  // Progress = number of items viewed / original round size
+  const progress = (currentIndex / roundSize) * 100;
   progressBar.style.width = progress + "%";
 }
 
@@ -106,7 +107,6 @@ card.addEventListener("pointermove", e => {
 
   const dx = e.clientX - startX;
   const dy = e.clientY - startY;
-
   card.style.transform = `translate(${dx}px, ${dy}px) rotate(${dx * 0.05}deg)`;
 });
 
@@ -126,7 +126,7 @@ card.addEventListener("pointerup", e => {
     updateCartDisplay();
     swipeAway(0, -600);
     historyStack.push({ item, type: swipeType, index: currentIndex });
-    workingMenu.splice(currentIndex,1);
+    workingMenu.splice(currentIndex,1); // remove from current round
   } 
   else if (dx > 80 && absX > absY) {
     // Swipe right → keep for next round
@@ -189,14 +189,4 @@ cartButton.onclick = () => {
   ordered.forEach(item => {
     html += `
       <div style="margin-bottom:15px;">
-        <img src="${item.image}" style="width:100%;border-radius:8px;">
-        <p><strong>${item.name}</strong> – ${item.price}</p>
-      </div>
-    `;
-  });
-
-  html += `<h3>Total: $${total}</h3>`;
-  html += `<button onclick="location.reload()">Start Over</button>`;
-
-  app.innerHTML = html;
-};
+        <img src="${item.image
