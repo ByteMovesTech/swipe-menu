@@ -25,6 +25,11 @@ fetch("menu.json")
 function showItem() {
   if (workingMenu.length === 0) {
     card.style.display = "none";
+
+    // Automatically show the cart when done
+    if (ordered.length > 0) {
+      showCart();
+    }
     return;
   }
 
@@ -35,6 +40,11 @@ function showItem() {
       index = 0;
     } else {
       card.style.display = "none";
+
+      // Automatically show the cart if there are ordered items
+      if (ordered.length > 0) {
+        showCart();
+      }
       return;
     }
   }
@@ -56,8 +66,9 @@ function updateCart() {
   cartButton.textContent = `Cart (${ordered.length})`;
 }
 
-cartButton.addEventListener("click", () => {
-  cartView.classList.toggle("hidden");
+// Show cart function
+function showCart() {
+  cartView.classList.remove("hidden");
 
   let html = "<h3>Your Order</h3>";
 
@@ -87,7 +98,10 @@ cartButton.addEventListener("click", () => {
     showItem();
     cartView.classList.add("hidden");
   });
-});
+}
+
+// Cart button click
+cartButton.addEventListener("click", showCart);
 
 // Swipe logic
 let startX = 0;
