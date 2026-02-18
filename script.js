@@ -25,9 +25,7 @@ fetch("menu.json")
 function showItem() {
   if (workingMenu.length === 0) {
     card.style.display = "none";
-    if (ordered.length > 0) {
-      showCart();
-    }
+    if (ordered.length > 0) showCart(); // auto-show cart when done
     return;
   }
 
@@ -38,9 +36,7 @@ function showItem() {
       index = 0;
     } else {
       card.style.display = "none";
-      if (ordered.length > 0) {
-        showCart();
-      }
+      if (ordered.length > 0) showCart();
       return;
     }
   }
@@ -52,9 +48,9 @@ function showItem() {
   imageEl.src = "images/" + item.image;
   card.style.display = "block";
 
-  // ADHD-friendly visual hint
+  // ADHD-friendly highlight
   card.classList.remove("highlight");
-  void card.offsetWidth; // Force reflow
+  void card.offsetWidth;
   card.classList.add("highlight");
 }
 
@@ -86,7 +82,6 @@ function showCart() {
         </div>
       `;
     });
-
     html += `<p class="cart-total"><strong>Total: $${total.toFixed(2)}</strong></p>`;
   }
 
@@ -108,13 +103,20 @@ function showCart() {
 // Cart button click
 cartButton.addEventListener("click", showCart);
 
-// Swipe logic
+// Swipe logic with visual movement
 let startX = 0;
 let startY = 0;
 
 card.addEventListener("touchstart", e => {
   startX = e.changedTouches[0].screenX;
   startY = e.changedTouches[0].screenY;
+});
+
+card.addEventListener("touchmove", e => {
+  if (!startX) return;
+  let moveX = e.changedTouches[0].screenX - startX;
+  let moveY = e.changedTouches[0].screenY - startY;
+  card.style.transform = `translate(${moveX}px, ${moveY}px) rotate(${moveX * 0.05}deg)`;
 });
 
 card.addEventListener("touchend", e => {
@@ -124,23 +126,43 @@ card.addEventListener("touchend", e => {
   let diffX = endX - startX;
   let diffY = endY - startY;
 
+  const threshold = 50;
+
   if (Math.abs(diffX) > Math.abs(diffY)) {
-    if (diffX > 50) {
-      // Swipe right = save
+    if (diffX > threshold) {
       saved.push(workingMenu[index]);
-      nextItem();
-    } else if (diffX < -50) {
-      // Swipe left = remove from next rounds
-      workingMenu.splice(index, 1);
-      showItem();
+      swipeCard(500, 0);
+    } else if (diffX < -threshold) {
+      swipeCard(-500, 0);
+    } else {
+      resetCardPosition();
     }
   } else {
-    if (diffY < -50) {
-      // Swipe up = order
+    if (diffY < -threshold) {
       ordered.push(workingMenu[index]);
-      workingMenu.splice(index, 1);
       updateCart();
-      showItem();
+      swipeCard(0, -500);
+    } else {
+      resetCardPosition();
     }
   }
 });
+
+function swipeCard(x, y) {
+  card.style.transition = "transform 0.3s ease, opacity 0.3s ease";
+  card.style.transform = `translate(${x}px, ${y}px) rotate(${x * 0.05}deg)`;
+  card.style.opacity = "0";
+
+  setTimeout(() => {
+    card.style.transition = "none";
+    card.style.transform = "translate(0,0)";
+    card.style.opacity = "1";
+    index++;
+    showItem();
+  }, 300);
+}
+
+function resetCardPosition() {
+  card.style.transition = "transform 0.2s ease";
+  card.style.transform = "translate(0,0)";
+  }
