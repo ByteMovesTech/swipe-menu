@@ -25,8 +25,6 @@ fetch("menu.json")
 function showItem() {
   if (workingMenu.length === 0) {
     card.style.display = "none";
-
-    // Automatically show the cart when done
     if (ordered.length > 0) {
       showCart();
     }
@@ -40,8 +38,6 @@ function showItem() {
       index = 0;
     } else {
       card.style.display = "none";
-
-      // Automatically show the cart if there are ordered items
       if (ordered.length > 0) {
         showCart();
       }
@@ -55,6 +51,11 @@ function showItem() {
   priceEl.textContent = "$" + item.price;
   imageEl.src = "images/" + item.image;
   card.style.display = "block";
+
+  // ADHD-friendly visual hint
+  card.classList.remove("highlight");
+  void card.offsetWidth; // Force reflow
+  card.classList.add("highlight");
 }
 
 function nextItem() {
@@ -66,16 +67,18 @@ function updateCart() {
   cartButton.textContent = `Cart (${ordered.length})`;
 }
 
-// Show cart function
+// Show cart function with total
 function showCart() {
   cartView.classList.remove("hidden");
 
   let html = "<h3>Your Order</h3>";
+  let total = 0;
 
   if (ordered.length === 0) {
     html += "<p>No items yet</p>";
   } else {
     ordered.forEach(i => {
+      total += parseFloat(i.price);
       html += `
         <div class="cart-item">
           <img src="images/${i.image}" alt="${i.name}">
@@ -83,6 +86,8 @@ function showCart() {
         </div>
       `;
     });
+
+    html += `<p class="cart-total"><strong>Total: $${total.toFixed(2)}</strong></p>`;
   }
 
   html += `<br><button id="startOver">Start Over</button>`;
